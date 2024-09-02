@@ -617,8 +617,95 @@ mkdir -p tests
 ### **2.4. Infraestructura y despliegue**
 
 **Prompt 1:**
+Detalla la infraestructura del proyecto en AWS, incluyendo un diagrama en el formato mermaid, y explica el proceso de despliegue que se sigue tomando en cuenta las mejores practicas DevSecOps
 
-**Prompt 2:**
+> Para detallar la infraestructura del proyecto en AWS y el proceso de despliegue, consideraremos una arquitectura basada en los servicios gratuitos de AWS, asegurando una implementación segura, escalable y de alto rendimiento. Se integrarán principios de DevSecOps para garantizar un flujo de trabajo automatizado y seguro desde el desarrollo hasta la producción.
+
+> ### **Infraestructura del Proyecto en AWS**
+> 1. **Amazon DynamoDB**: Base de datos NoSQL para el almacenamiento de datos de sensores, resultados de predicciones, y logs de alertas. Ofrece alta disponibilidad, bajo mantenimiento y escalabilidad automática.
+> 2. **AWS Lambda**: Utilizado para la ejecución de modelos predictivos y procesamiento de datos en tiempo real. Lambda permite ejecutar funciones Java bajo demanda, reduciendo costos y simplificando la administración.
+> 3. **AWS API Gateway**: Exposición de APIs REST que conecta el frontend con los servicios del backend. Maneja autenticación, control de acceso y monitoreo de tráfico.
+> 4. **Amazon SNS (Simple Notification Service)**: Servicio de mensajería para la entrega de alertas y notificaciones a los usuarios técnicos y operadores.
+> 5. **AWS Amplify**: Servicio de hosting para la aplicación frontend (React). Amplify facilita el despliegue continuo, y la integración con la API Gateway.
+> 6. **Amazon S3**: Almacenamiento de archivos estáticos, como configuraciones y recursos adicionales que puedan necesitarse.
+> 7. **AWS CodePipeline**: Pipeline CI/CD para automatizar el flujo de despliegue. Se conecta con CodeCommit (repositorio de código) y gestiona la construcción, pruebas y despliegue automático.
+> 8. **AWS CodeBuild**: Servicio de construcción automatizada para compilar y probar la aplicación. Se integra en el pipeline de CodePipeline y asegura que cada commit cumpla con los estándares antes de ser desplegado.
+> 9. **IAM (Identity and Access Management)**: Gestión de permisos y acceso seguro a los recursos de AWS. Implementa políticas de acceso mínimo necesario para asegurar cada componente.
+> 10. **Amazon CloudWatch**: Monitoreo de logs, métricas y alertas. Permite detectar anomalías en la aplicación y la infraestructura.
+> ### **Diagrama de Infraestructura en Formato Mermaid**
+> ```mermaid
+> graph TD
+>     A[Frontend - React AWS Amplify] -->|Requests| B[API Gateway]
+>     B --> C[Lambda - Java Spring Boot]
+>     C --> D[DynamoDB]
+>     C --> E[Amazon SNS]
+>     D --> F[CloudWatch] 
+>     E --> F
+>     C --> F
+>     A --> F
+>     subgraph CI/CD Pipeline
+>         G[CodeCommit] --> H[CodeBuild]
+>         H --> I[CodePipeline]
+>         I --> B
+>         I --> A
+>     end
+> ```
+> ### **Proceso de Despliegue siguiendo DevSecOps**
+> 1. **Commit y Code Review**: 
+>    - El código se sube a **AWS CodeCommit**, donde se realiza una revisión de código para verificar la calidad, identificar vulnerabilidades de seguridad, y garantizar el cumplimiento de las prácticas de desarrollo seguro.
+> 2. **Construcción y Pruebas Automáticas**: 
+>    - **AWS CodeBuild** ejecuta la compilación del backend en Java y corre los tests definidos bajo TDD. Para el frontend, se construyen los assets estáticos y se ejecutan pruebas de integración y rendimiento.
+>    - Se incluyen pruebas de seguridad como análisis de dependencias y escaneo estático del código (SAST) para detectar vulnerabilidades en etapas tempranas.
+> 3. **Despliegue Automatizado**:
+>    - **AWS CodePipeline** coordina el flujo completo de CI/CD, asegurando que el código que pase las pruebas y revisiones se despliegue automáticamente en los entornos de prueba o producción.
+>    - Para el backend, se despliega en **AWS Lambda** y se actualiza la configuración de **API Gateway**. El frontend se publica en **AWS Amplify**.
+> 4. **Seguridad Integrada (DevSecOps)**:
+>    - Se aplican políticas de acceso restringido mediante **IAM**, asegurando que cada componente tenga solo los permisos necesarios.
+>    - Los datos se cifran en tránsito mediante TLS/SSL, y se habilitan logs detallados en **CloudWatch** para auditoría y monitoreo de seguridad.
+>    - Se utilizan alertas automatizadas para detectar cualquier actividad sospechosa o fallos en el sistema.
+> 5. **Monitoreo y Alerta**:
+>    - **Amazon CloudWatch** recopila métricas de rendimiento y logs de aplicación. Se configuran alertas que notifican automáticamente al equipo si se detectan comportamientos anómalos o posibles fallos.
+>    - Las alertas se envían a través de **SNS**, informando a los responsables de mantenimiento y operación.
+> ### **Beneficios del Enfoque DevSecOps**
+> - **Automatización Completa**: Minimiza los errores humanos, acelera el tiempo de entrega y asegura que las pruebas y despliegues se realicen de manera consistente.
+> - **Seguridad Integrada**: Incorpora seguridad en cada etapa del pipeline de CI/CD, desde la codificación hasta la producción, protegiendo los datos y el acceso a los servicios.
+> - **Resiliencia y Escalabilidad**: Con la arquitectura desacoplada y los servicios manejados de AWS, el sistema es fácil de escalar y puede adaptarse rápidamente a los cambios en la carga.
+> Este proceso asegura una entrega continua, segura y eficiente del sistema predictivo de mantenimiento, alineada con los estándares modernos de desarrollo y operación de software.
+
+**Prompt 2: erase.io**
+Genera un diagrama a partir del siguiente diagrama mermaid:...
+
+> // Title and nodes
+> title AWS Architecture with CI/CD Pipeline
+>
+> Frontend [label: "Frontend - React (AWS Amplify)", icon: react]
+> API Gateway [icon: aws-api-gateway]
+> Lambda [label: "Lambda - Java Spring Boot", icon: aws-lambda]
+> DynamoDB [icon: aws-dynamodb]
+> SNS [label: "Amazon SNS", icon: aws-sns]
+> CloudWatch [icon: aws-cloudwatch]
+>
+> CI-CD Pipeline [icon: aws-codepipeline] {
+>   CodeCommit [icon: aws-codecommit]
+>   CodeBuild [icon: aws-codebuild]
+>   CodePipeline [icon: aws-codepipeline]
+> }
+>
+> // Connections
+> Frontend --> API Gateway: Requests
+> API Gateway --> Lambda
+> Lambda --> DynamoDB
+> Lambda --> SNS
+> DynamoDB --> CloudWatch
+> SNS --> CloudWatch
+> Lambda --> CloudWatch
+> Frontend --> CloudWatch
+>
+> // CI/CD Pipeline connections
+> CodeCommit --> CodeBuild
+> CodeBuild --> CodePipeline
+> CodePipeline --> API Gateway
+> CodePipeline --> Frontend
 
 **Prompt 3:**
 

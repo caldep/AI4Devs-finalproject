@@ -1,0 +1,31 @@
+// Title and nodes
+title AWS Architecture with CI/CD Pipeline
+
+Frontend [label: "Frontend - React (AWS Amplify)", icon: react]
+API Gateway [icon: aws-api-gateway]
+Lambda [label: "Lambda - Java Spring Boot", icon: aws-lambda]
+DynamoDB [icon: aws-dynamodb]
+SNS [label: "Amazon SNS", icon: aws-sns]
+CloudWatch [icon: aws-cloudwatch]
+
+CI-CD Pipeline [icon: aws-codepipeline] {
+  CodeCommit [icon: aws-codecommit]
+  CodeBuild [icon: aws-codebuild]
+  CodePipeline [icon: aws-codepipeline]
+}
+
+// Connections
+Frontend --> API Gateway: Requests
+API Gateway --> Lambda
+Lambda --> DynamoDB
+Lambda --> SNS
+DynamoDB --> CloudWatch
+SNS --> CloudWatch
+Lambda --> CloudWatch
+Frontend --> CloudWatch
+
+// CI/CD Pipeline connections
+CodeCommit --> CodeBuild
+CodeBuild --> CodePipeline
+CodePipeline --> API Gateway
+CodePipeline --> Frontend

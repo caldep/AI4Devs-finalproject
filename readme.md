@@ -131,69 +131,6 @@ La arquitectura hexagonal se elige para este sistema predictivo de mantenimiento
 
 ### **2.3. Descripción de alto nivel del proyecto y estructura de ficheros**
 
-├── backend/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   ├── com.example.mantenimiento/
-│   │   │   │   │   ├── application/
-│   │   │   │   │   │   ├── service/             # Servicios de aplicación que coordinan los casos de uso.
-│   │   │   │   │   │   ├── dto/                 # Objetos de transferencia de datos (Data Transfer Objects).
-│   │   │   │   │   │   ├── command/             # Comandos o peticiones que ejecutan casos de uso.
-│   │   │   │   │   │
-│   │   │   │   │   ├── domain/
-│   │   │   │   │   │   ├── model/               # Entidades del dominio y objetos de valor (Value Objects).
-│   │   │   │   │   │   ├── repository/          # Interfaces de repositorios para acceso a datos.
-│   │   │   │   │   │   ├── event/               # Eventos de dominio.
-│   │   │   │   │   │   ├── exception/           # Excepciones de dominio personalizadas.
-│   │   │   │   │   │
-│   │   │   │   │   ├── infrastructure/
-│   │   │   │   │   │   ├── persistence/         # Implementación de los repositorios (uso de ORM como Hibernate).
-│   │   │   │   │   │   ├── config/              # Configuraciones del sistema (seguridad, base de datos).
-│   │   │   │   │   │   ├── messaging/           # Adaptadores para sistemas de mensajería (SNS, SQS).
-│   │   │   │   │   │   ├── api/                 # Controladores REST que exponen los servicios del sistema.
-│   │   │   │   │   │   ├── external/            # Integraciones con sistemas externos y adaptadores.
-│   │   │   │   │   │
-│   │   │   │   │   ├── shared/
-│   │   │   │   │   │   ├── util/                # Utilidades comunes y helpers.
-│   │   │   │   │   │   ├── mapper/              # Mapeadores para convertir entidades a DTO y viceversa.
-│   │   │   │   │
-│   │   │   ├── resources/
-│   │   │   │   ├── application.yml              # Configuración de la aplicación (DB, seguridad, etc.).
-│   │   │   │   ├── logback.xml                  # Configuración de logs.
-│   │   │
-│   │   ├── test/
-│   │   │   ├── java/
-│   │   │   │   ├── com.example.mantenimiento/
-│   │   │   │   │   ├── application/             # Pruebas de casos de uso y servicios de aplicación.
-│   │   │   │   │   ├── domain/                  # Pruebas unitarias de la lógica de negocio (TDD).
-│   │   │   │   │   ├── infrastructure/          # Pruebas de integración con adaptadores.
-│   │   │   │   │   ├── shared/                  # Pruebas de utilidades y mapeadores.
-│   │   │
-│   ├── Dockerfile                               # Archivo Docker para la imagen del backend.
-│   ├── docker-compose.yml                       # Configuración para la orquestación de contenedores.
-│
-├── frontend/
-│   ├── public/                                  # Archivos públicos del frontend (índices, iconos).
-│   ├── src/
-│   │   ├── components/                          # Componentes visuales de React.
-│   │   ├── pages/                               # Vistas y páginas de la aplicación.
-│   │   ├── services/                            # Servicios para la conexión con la API REST.
-│   │   ├── hooks/                               # Hooks personalizados de React.
-│   │   ├── context/                             # Contextos de React para el manejo del estado global.
-│   │   ├── styles/                              # Estilos CSS o SCSS.
-│   ├── Dockerfile                               # Archivo Docker para la imagen del frontend.
-│
-├── .gitignore                                   # Archivo para ignorar archivos no deseados en el control de versiones.
-├── README.md                                    # Documentación del proyecto.
-└── tests/                                       # Pruebas end-to-end y de integración del sistema completo.
-
-La estructura del proyecto para el sistema predictivo de mantenimiento, siguiendo la arquitectura hexagonal, y alineada con las mejores prácticas de DDD (Domain-Driven Design) y TDD (Test-Driven Development), se organiza en capas bien definidas que separan claramente la lógica de negocio de la infraestructura y las interfaces externas. La estructura propuesta también toma en cuenta la contenedorización con Docker y el uso de un ORM para independencia del gestor de datos.
-
-### **Estructura del Proyecto**
-
-Aquí tienes una representación de la estructura de carpetas y el propósito de cada una:
-
 ```plaintext
 ├── backend/
 │   ├── src/
@@ -253,33 +190,63 @@ Aquí tienes una representación de la estructura de carpetas y el propósito de
 └── tests/                                       # Pruebas end-to-end y de integración del sistema completo.
 ```
 
-### **Explicación de las Carpetas Principales**
+#### **2.3.1. Explicación de las Carpetas Principales**
 
-1. **`application/`**: Contiene la capa de aplicación que gestiona los casos de uso y los servicios que coordinan las reglas de negocio. No contiene lógica de dominio sino que sirve de intermediario entre la UI, la infraestructura, y el dominio.
+2.3.1.1. **`application/`**: Contiene la capa de aplicación que gestiona los casos de uso y los servicios que coordinan las reglas de negocio. No contiene lógica de dominio sino que sirve de intermediario entre la UI, la infraestructura, y el dominio.
 
-2. **`domain/`**: El corazón de la arquitectura, donde se definen las entidades, repositorios, eventos y excepciones del dominio. Aquí se aplica DDD, modelando la lógica de negocio de forma pura y sin dependencias de infraestructura.
+2.3.1.2. **`domain/`**: El corazón de la arquitectura, donde se definen las entidades, repositorios, eventos y excepciones del dominio. Aquí se aplica DDD, modelando la lógica de negocio de forma pura y sin dependencias de infraestructura.
 
-3. **`infrastructure/`**: Aquí se implementan los adaptadores que interactúan con la infraestructura tecnológica. Contiene la configuración de persistencia usando un ORM (como Hibernate), API REST, y los servicios de mensajería.
+2.3.1.3. **`infrastructure/`**: Aquí se implementan los adaptadores que interactúan con la infraestructura tecnológica. Contiene la configuración de persistencia usando un ORM (como Hibernate), API REST, y los servicios de mensajería.
 
-4. **`shared/`**: Componentes reutilizables, como utilidades, mapeadores y helpers que son compartidos por las demás capas del sistema, asegurando consistencia y evitando la duplicación de código.
+2.3.1.4. **`shared/`**: Componentes reutilizables, como utilidades, mapeadores y helpers que son compartidos por las demás capas del sistema, asegurando consistencia y evitando la duplicación de código.
 
-5. **`test/`**: Organizada siguiendo TDD, con pruebas para cada capa del sistema: pruebas unitarias para el dominio, de integración para infraestructura y de los casos de uso para la aplicación.
+2.3.1.5. **`test/`**: Organizada siguiendo TDD, con pruebas para cada capa del sistema: pruebas unitarias para el dominio, de integración para infraestructura y de los casos de uso para la aplicación.
 
-6. **Frontend (`frontend/`)**: Contiene la aplicación React, dividida en componentes, servicios, y hooks. El frontend está diseñado para consumir la API del backend y mostrar los datos en tiempo real, proporcionando una experiencia de usuario intuitiva.
+2.3.1.6. **Frontend (`frontend/`)**: Contiene la aplicación React, dividida en componentes, servicios, y hooks. El frontend está diseñado para consumir la API del backend y mostrar los datos en tiempo real, proporcionando una experiencia de usuario intuitiva.
 
-7. **`Dockerfile` y `docker-compose.yml`**: Definen cómo se dockerizan el backend y frontend para una fácil implementación y orquestación, permitiendo que los servicios sean desplegados y administrados en contenedores.
+2.3.1.7. **`Dockerfile` y `docker-compose.yml`**: Definen cómo se dockerizan el backend y frontend para una fácil implementación y orquestación, permitiendo que los servicios sean desplegados y administrados en contenedores.
 
-### **Patrón y Arquitectura Aplicada**
+#### **2.3.2. Patrón y Arquitectura Aplicada**
 
 - **Patrón Hexagonal**: Separa la lógica de negocio de la infraestructura, permitiendo independencia y flexibilidad en la integración con tecnologías externas.
 - **DDD (Domain-Driven Design)**: Define la estructura del proyecto basada en las reglas y entidades del dominio, asegurando que la lógica de negocio esté bien encapsulada y modular.
 - **TDD (Test-Driven Development)**: La estructura de carpetas incluye pruebas desde el inicio, asegurando que cada capa y componente del sistema cumpla con su funcionalidad prevista.
 
-Este diseño modular y desacoplado facilita el mantenimiento, la escalabilidad y el entendimiento claro del sistema, asegurando que el proyecto siga las mejores prácticas de desarrollo ágil y arquitectónico.
-
 ### **2.4. Infraestructura y despliegue**
 
-> Detalla la infraestructura del proyecto, incluyendo un diagrama en el formato que creas conveniente, y explica el proceso de despliegue que se sigue
+La infraestructura del proyecto es una arquitectura basada en los servicios de AWS, garantizando una implementación segura, escalable y de alto rendimiento. 
+
+#### **Infraestructura del Proyecto en AWS**
+![Diagrama de Despliegue del Sistema Predictivo de Mantenimiento de Equipos](./documents/architecture/images/deploySPME.png)
+
+#### **2.4.1. Proceso de Despliegue siguiendo DevSecOps**
+
+2.4.1.1. **Commit y Code Review**: 
+   - El código se sube a **AWS CodeCommit**, donde se realiza una revisión de código para verificar la calidad, identificar vulnerabilidades de seguridad, y garantizar el cumplimiento de las prácticas de desarrollo seguro.
+   
+2.4.1.2. **Construcción y Pruebas Automáticas**: 
+   - **AWS CodeBuild** ejecuta la compilación del backend en Java y corre los tests definidos bajo TDD. Para el frontend, se construyen los assets estáticos y se ejecutan pruebas de integración y rendimiento.
+   - Se incluyen pruebas de seguridad como análisis de dependencias y escaneo estático del código (SAST) para detectar vulnerabilidades en etapas tempranas.
+
+2.4.1.3. **Despliegue Automatizado**:
+   - **AWS CodePipeline** coordina el flujo completo de CI/CD, asegurando que el código que pase las pruebas y revisiones se despliegue automáticamente en los entornos de prueba o producción.
+   - Para el backend, se despliega en **AWS Lambda** y se actualiza la configuración de **API Gateway**. El frontend se publica en **AWS Amplify**.
+
+2.4.1.4. **Seguridad Integrada (DevSecOps)**:
+   - Se aplican políticas de acceso restringido mediante **IAM**, asegurando que cada componente tenga solo los permisos necesarios.
+   - Los datos se cifran en tránsito mediante TLS/SSL, y se habilitan logs detallados en **CloudWatch** para auditoría y monitoreo de seguridad.
+   - Se utilizan alertas automatizadas para detectar cualquier actividad sospechosa o fallos en el sistema.
+
+2.4.1.5. **Monitoreo y Alerta**:
+   - **Amazon CloudWatch** recopila métricas de rendimiento y logs de aplicación. Se configuran alertas que notifican automáticamente al equipo si se detectan comportamientos anómalos o posibles fallos.
+   - Las alertas se envían a través de **SNS**, informando a los responsables de mantenimiento y operación.
+
+### **2.4.2. Beneficios del Enfoque DevSecOps**
+
+- **Automatización Completa**: Minimiza los errores humanos, acelera el tiempo de entrega y asegura que las pruebas y despliegues se realicen de manera consistente.
+- **Seguridad Integrada**: Incorpora seguridad en cada etapa del pipeline de CI/CD, desde la codificación hasta la producción, protegiendo los datos y el acceso a los servicios.
+- **Resiliencia y Escalabilidad**: Con la arquitectura desacoplada y los servicios manejados de AWS, el sistema es fácil de escalar y puede adaptarse rápidamente a los cambios en la carga.
+
 
 ### **2.5. Seguridad**
 
