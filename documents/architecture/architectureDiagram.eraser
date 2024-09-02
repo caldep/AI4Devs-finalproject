@@ -1,0 +1,43 @@
+// Title
+title Sistema Predictivo de Mantenimiento de Equipos
+
+// Core Group
+Core [color: blue, icon: hexagon] {
+  Entidades [icon: database]
+  Servicios de Dominio [icon: server]
+  Casos de Uso [icon: briefcase]
+}
+
+// Ports Group
+Ports [color: red, icon: plug] {
+  API REST-GraphQL [icon: globe]
+  Panel de Control Web [icon: monitor]
+  Sensores-Scada [icon: sensor]
+  Base de Datos NoSQL [icon: database]
+}
+
+// Infraestructura Group
+Infraestructura [color: green, icon: cloud] {
+  Motor de Machine Learning [icon: brain]
+  Gestión de Mensajería [icon: message-circle]
+  Microservicios Kubernetes [icon: kubernetes]
+}
+
+// Connections within Core
+Entidades > Servicios de Dominio
+Servicios de Dominio > Casos de Uso
+
+// Connections within Ports
+API REST-GraphQL <> Casos de Uso
+Panel de Control Web <> Casos de Uso
+Sensores-Scada > Casos de Uso
+Base de Datos NoSQL > Casos de Uso
+
+// Connections within Infraestructura
+Motor de Machine Learning > Servicios de Dominio
+Gestión de Mensajería <> Servicios de Dominio
+Microservicios Kubernetes > Servicios de Dominio
+
+// Connections between groups
+Core > Ports
+Core > Infraestructura
