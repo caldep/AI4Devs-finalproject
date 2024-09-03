@@ -1340,11 +1340,348 @@ Aplica los siguientes cambios en el modelo de datos:
 ### 4. Especificación de la API
 
 **Prompt 1:**
+eres un experto desarrollador java y ReactJs, tomando en cuenta la arquitectura definida para este sistema de predicción de mantenimiento de equipos, genera las especificaciones técnicas de la APIs que se requieren implementar. Describe los endpoints principales en formato OpenAPI. 
+
+Antes de comenzar, hazme las preguntas que necesites. No generes las especificaciones aún.
+
+> Para definir correctamente las especificaciones técnicas de las APIs del sistema predictivo de mantenimiento de equipos y asegurar que cumplan con todos los requerimientos funcionales y técnicos, necesitaría confirmar algunos detalles y hacerte unas preguntas clave:
+>
+> ### Preguntas para Definir las Especificaciones de la API:
+>
+> 1. **Autenticación y Seguridad**:
+>    - ¿Se requerirá algún tipo de autenticación para los endpoints (e.g., JWT, API Keys), aunque no se implemente en la primera versión?
+>    - ¿Habrá restricciones de roles o permisos sobre los endpoints (e.g., algunos accesibles solo para operadores)?
+>
+> 2. **Estructura de Datos de los Endpoints**:
+>    - ¿Se espera que las APIs manejen operaciones CRUD completas (crear, leer, actualizar, eliminar) para todos los documentos (`EQUIPO`, `OPERADOR`, `MEDICION`, `PREDICCION`, `ALERTA`)?
+>    - ¿Los operadores pueden gestionar (crear, actualizar, eliminar) sus propios datos desde la API, o solo consultar?
+>
+> 3. **Integración y Consistencia**:
+>    - ¿Existen otros sistemas que necesiten integrarse o consumir estas APIs, o se espera que los endpoints solo sirvan al frontend ReactJS?
+>    - ¿Requieren que las APIs envíen notificaciones o eventos a otros servicios (e.g., alertas en tiempo real)?
+>
+> 4. **Paginación, Filtros y Ordenamientos**:
+>    - ¿Es necesario implementar paginación, filtrado, o búsqueda avanzada en los endpoints, especialmente para listados de mediciones y predicciones?
+>    - ¿Se requiere soporte para ordenar resultados (e.g., por fecha, probabilidad de predicción)?
+>
+> 5. **Datos Históricos y Respaldo**:
+>    - ¿Necesitan los endpoints manejar consultas para datos históricos limitados a los últimos tres meses, o también incluir accesos a respaldos anuales?
+>
+> 6. **Manejo de Errores y Respuestas**:
+>    - ¿Hay algún formato de respuesta o manejo de errores específico que debamos seguir (e.g., estandarización de mensajes de error, códigos de estado personalizados)?
+>
+> ### Confirmaciones Adicionales:
+>
+> - ¿Cuál es la prioridad de los endpoints (por ejemplo, crear predicciones y alertas es más prioritario que gestionar equipos)?
+> - ¿Los operadores deben ser notificados a través de las APIs (e.g., envío de mensajes o correos)?
+>
+> Con estas respuestas, podré definir las especificaciones de los endpoints de manera precisa y alineada con los requerimientos del sistema.
 
 **Prompt 2:**
+1.1 Si, aunque en esta primera versión no lo usaremos.
+1.2 En esta primera versión no.
+2.1 Si.
+2.2 Si.
+3.1 Los endpoints deben servir al frontend ReactJS.
+3.2 No, en esta primera versión no.
+4.1 Si.
+4.2 Si.
+5.1 No.
+6.1 Usaremos estandarización de mensajes de error. Opcionalmente, se podrá usar algunos códigos de estado personalizados.
+Confirmaciones Adicionales:
+1. Si.
+2. Si.
+
+> Gracias por tus respuestas. Con esta información, prepararé las especificaciones técnicas de las APIs necesarias para el sistema predictivo de mantenimiento de equipos en formato OpenAPI. Aquí está el plan para lo que se implementará:
+>
+> ### Especificaciones de la API en Formato OpenAPI
+>
+> Se detallarán los endpoints principales para cada documento: `EQUIPO`, `OPERADOR`, `MEDICION`, `PREDICCION`, y `ALERTA`. Los endpoints incluirán operaciones CRUD donde sea necesario y soportarán funcionalidades de paginación, filtrado y ordenamiento para mejorar la gestión de los datos.
+>
+> ### Endpoints Propuestos:
+>
+> 1. **Equipos (`/equipos`)**:
+>    - Gestión de equipos y sus relaciones con operadores y mediciones.
+>
+> 2. **Operadores (`/operadores`)**:
+>    - Gestión de los operadores que mantienen los equipos.
+>
+> 3. **Mediciones (`/mediciones`)**:
+>    - Registro y consulta de mediciones de los sensores de los equipos.
+>
+> 4. **Predicciones (`/predicciones`)**:
+>    - Creación y consulta de predicciones generadas por el sistema.
+>
+> 5. **Alertas (`/alertas`)**:
+>    - Gestión y consulta de alertas generadas a partir de las predicciones.
+>
+> ### Próximos Pasos:
+>
+> Voy a proceder a generar la especificación completa en OpenAPI con estos endpoints y sus respectivas operaciones, asegurando que cumplan con las mejores prácticas y la estructura que el sistema requiere. ¿Te parece bien continuar con esto?
 
 **Prompt 3:**
+Solo agrega estos tres que son los prioritarios:
+1. Equipos.
+2. Mediciones.
+3. Predicciones.
 
+> Perfecto, me enfocaré en los tres endpoints prioritarios: **Equipos**, **Mediciones**, y **Predicciones**. A continuación, generaré las especificaciones de estos endpoints en formato OpenAPI, detallando sus operaciones principales y asegurando que se adapten a las necesidades del sistema.
+>
+> ### Especificaciones OpenAPI para los Endpoints Prioritarios
+>
+> ```yaml
+> openapi: 3.0.0
+> info:
+>   title: API Sistema Predictivo de Mantenimiento de Equipos
+>   version: 1.0.0
+>   description: API para gestionar equipos, mediciones y predicciones del sistema predictivo de mantenimiento de equipos.
+>
+> paths:
+>   /equipos:
+>     get:
+>       summary: Obtener todos los equipos
+>       description: Retorna una lista de todos los equipos con sus detalles.
+>       parameters:
+>         - in: query
+>           name: page
+>           schema:
+>             type: integer
+>           description: Página de los resultados a obtener.
+>         - in: query
+>           name: size
+>           schema:
+>             type: integer
+>           description: Cantidad de resultados por página.
+>         - in: query
+>           name: sort
+>           schema:
+>             type: string
+>           description: Criterio de ordenamiento (e.g., nombre, tipo).
+>       responses:
+>         '200':
+>           description: Lista de equipos obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Crear un nuevo equipo
+>       description: Registra un nuevo equipo en el sistema.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 nombre:
+>                   type: string
+>                   example: Compresor A
+>                 tipo:
+>                   type: string
+>                   example: Compresor
+>                 ubicacion:
+>                   type: string
+>                   example: Planta Norte
+>                 fecha_instalacion:
+>                   type: string
+>                   format: date
+>                   example: 2023-08-01
+>       responses:
+>         '201':
+>           description: Equipo creado exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+>
+>   /mediciones:
+>     get:
+>       summary: Obtener mediciones de los equipos
+>       description: Devuelve una lista de mediciones para los equipos registrados, con soporte para paginación y filtros.
+>       parameters:
+>         - in: query
+>           name: equipo_id
+>           schema:
+>             type: string
+>           description: ID del equipo para filtrar mediciones.
+>         - in: query
+>           name: fecha_inicio
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de inicio del rango de consulta.
+>         - in: query
+>           name: fecha_fin
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de fin del rango de consulta.
+>       responses:
+>         '200':
+>           description: Lista de mediciones obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Registrar una nueva medición
+>       description: Añade una nueva medición de los sensores para un equipo específico.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 equipo_id:
+>                   type: string
+>                   example: 12345
+>                 fecha:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:00:00Z
+>                 frecuencia:
+>                   type: number
+>                   format: float
+>                   example: 50.0
+>                 corriente:
+>                   type: number
+>                   format: float
+>                   example: 10.0
+>                 presion_in:
+>                   type: number
+>                   format: float
+>                   example: 2.5
+>                 presion_out:
+>                   type: number
+>                   format: float
+>                   example: 3.0
+>                 temperatura_in:
+>                   type: number
+>                   format: float
+>                   example: 60.0
+>                 temperatura_out:
+>                   type: number
+>                   format: float
+>                   example: 65.0
+>                 vibracion_x:
+>                   type: number
+>                   format: float
+>                   example: 0.5
+>       responses:
+>         '201':
+>           description: Medición registrada exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+>
+>   /predicciones:
+>     get:
+>       summary: Obtener predicciones
+>       description: Retorna una lista de predicciones generadas por el sistema, filtradas por equipo o rango de fechas.
+>       parameters:
+>         - in: query
+>           name: equipo_id
+>           schema:
+>             type: string
+>           description: ID del equipo para filtrar predicciones.
+>         - in: query
+>           name: fecha_inicio
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de inicio del rango de consulta.
+>         - in: query
+>           name: fecha_fin
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de fin del rango de consulta.
+>       responses:
+>         '200':
+>           description: Lista de predicciones obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Crear una nueva predicción
+>       description: Añade una nueva predicción basada en las mediciones recientes de un equipo.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 equipo_id:
+>                   type: string
+>                   example: 12345
+>                 fecha:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:00:00Z
+>                 tipo_evento_predictivo:
+>                   type: string
+>                   example: Fallo de Motor
+>                 probabilidad:
+>                   type: number
+>                   format: float
+>                   example: 0.85
+>                 tipo_evento_real:
+>                   type: string
+>                   example: Operación Normal
+>                 frecuencia:
+>                   type: number
+>                   format: float
+>                   example: 50.0
+>                 corriente:
+>                   type: number
+>                   format: float
+>                   example: 10.0
+>                 presion_in:
+>                   type: number
+>                   format: float
+>                   example: 2.5
+>                 presion_out:
+>                   type: number
+>                   format: float
+>                   example: 3.0
+>                 temperatura_in:
+>                   type: number
+>                   format: float
+>                   example: 60.0
+>                 temperatura_out:
+>                   type: number
+>                   format: float
+>                   example: 65.0
+>                 vibracion_x:
+>                   type: number
+>                   format: float
+>                   example: 0.5
+>       responses:
+>         '201':
+>           description: Predicción creada exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+> ```
+>
+> ### Descripción de los Endpoints:
+>
+> 1. **/equipos**:
+>    - **GET**: Lista todos los equipos, con soporte para paginación y ordenamiento.
+>    - **POST**: Permite registrar un nuevo equipo con sus detalles básicos.
+>
+> 2. **/mediciones**:
+>    - **GET**: Obtiene las mediciones de los sensores de los equipos, con posibilidad de filtrar por rango de fechas y por equipo.
+>    - **POST**: Registra una nueva medición de los sensores para un equipo específico.
+>
+> 3. **/predicciones**:
+>    - **GET**: Lista las predicciones generadas, permitiendo filtrar por equipo o rango de fechas.
+>    - **POST**: Crea una nueva predicción basada en las mediciones recientes de un equipo.
+>
+> Estas especificaciones se han alineado con los requerimientos de funcionalidad del sistema y siguen las mejores prácticas en la definición de APIs RESTful, asegurando una correcta gestión y acceso a los datos críticos para el mantenimiento predictivo de los equipos.
 ---
 
 ### 5. Historias de Usuario

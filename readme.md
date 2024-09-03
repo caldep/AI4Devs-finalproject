@@ -409,7 +409,260 @@ erDiagram
 
 ## 4. Especificación de la API
 
-> Si tu backend se comunica a través de API, describe los endpoints principales (máximo 3) en formato OpenAPI. Opcionalmente puedes añadir un ejemplo de petición y de respuesta para mayor claridad
+A continuación se describen los principales endpoints de la API RESTful del sistema predictivo de mantenimiento de equipos.
+
+```yaml
+openapi: 3.0.0
+info:
+  title: API Sistema Predictivo de Mantenimiento de Equipos
+  version: 1.0.0
+  description: API para gestionar equipos, mediciones y predicciones del sistema predictivo de mantenimiento de equipos.
+
+paths:
+  /equipos:
+    get:
+      summary: Obtener todos los equipos
+      description: Retorna una lista de todos los equipos con sus detalles.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Página de los resultados a obtener.
+        - in: query
+          name: size
+          schema:
+            type: integer
+          description: Cantidad de resultados por página.
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Criterio de ordenamiento (e.g., nombre, tipo).
+      responses:
+        '200':
+          description: Lista de equipos obtenida exitosamente.
+        '500':
+          description: Error interno del servidor.
+
+    post:
+      summary: Crear un nuevo equipo
+      description: Registra un nuevo equipo en el sistema.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: Compresor A
+                tipo:
+                  type: string
+                  example: Compresor
+                ubicacion:
+                  type: string
+                  example: Planta Norte
+                fecha_instalacion:
+                  type: string
+                  format: date
+                  example: 2023-08-01
+      responses:
+        '201':
+          description: Equipo creado exitosamente.
+        '400':
+          description: Datos de entrada inválidos.
+        '500':
+          description: Error interno del servidor.
+
+  /mediciones:
+    get:
+      summary: Obtener mediciones de los equipos
+      description: Devuelve una lista de mediciones para los equipos registrados, con soporte para paginación y filtros.
+      parameters:
+        - in: query
+          name: equipo_id
+          schema:
+            type: string
+          description: ID del equipo para filtrar mediciones.
+        - in: query
+          name: fecha_inicio
+          schema:
+            type: string
+            format: date
+          description: Fecha de inicio del rango de consulta.
+        - in: query
+          name: fecha_fin
+          schema:
+            type: string
+            format: date
+          description: Fecha de fin del rango de consulta.
+      responses:
+        '200':
+          description: Lista de mediciones obtenida exitosamente.
+        '500':
+          description: Error interno del servidor.
+
+    post:
+      summary: Registrar una nueva medición
+      description: Añade una nueva medición de los sensores para un equipo específico.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equipo_id:
+                  type: string
+                  example: 12345
+                fecha:
+                  type: string
+                  format: date-time
+                  example: 2024-08-29T14:00:00Z
+                frecuencia:
+                  type: number
+                  format: float
+                  example: 50.0
+                corriente:
+                  type: number
+                  format: float
+                  example: 10.0
+                presion_in:
+                  type: number
+                  format: float
+                  example: 2.5
+                presion_out:
+                  type: number
+                  format: float
+                  example: 3.0
+                temperatura_in:
+                  type: number
+                  format: float
+                  example: 60.0
+                temperatura_out:
+                  type: number
+                  format: float
+                  example: 65.0
+                vibracion_x:
+                  type: number
+                  format: float
+                  example: 0.5
+      responses:
+        '201':
+          description: Medición registrada exitosamente.
+        '400':
+          description: Datos de entrada inválidos.
+        '500':
+          description: Error interno del servidor.
+
+  /predicciones:
+    get:
+      summary: Obtener predicciones
+      description: Retorna una lista de predicciones generadas por el sistema, filtradas por equipo o rango de fechas.
+      parameters:
+        - in: query
+          name: equipo_id
+          schema:
+            type: string
+          description: ID del equipo para filtrar predicciones.
+        - in: query
+          name: fecha_inicio
+          schema:
+            type: string
+            format: date
+          description: Fecha de inicio del rango de consulta.
+        - in: query
+          name: fecha_fin
+          schema:
+            type: string
+            format: date
+          description: Fecha de fin del rango de consulta.
+      responses:
+        '200':
+          description: Lista de predicciones obtenida exitosamente.
+        '500':
+          description: Error interno del servidor.
+
+    post:
+      summary: Crear una nueva predicción
+      description: Añade una nueva predicción basada en las mediciones recientes de un equipo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equipo_id:
+                  type: string
+                  example: 12345
+                fecha:
+                  type: string
+                  format: date-time
+                  example: 2024-08-29T14:00:00Z
+                tipo_evento_predictivo:
+                  type: string
+                  example: Fallo de Motor
+                probabilidad:
+                  type: number
+                  format: float
+                  example: 0.85
+                tipo_evento_real:
+                  type: string
+                  example: Operación Normal
+                frecuencia:
+                  type: number
+                  format: float
+                  example: 50.0
+                corriente:
+                  type: number
+                  format: float
+                  example: 10.0
+                presion_in:
+                  type: number
+                  format: float
+                  example: 2.5
+                presion_out:
+                  type: number
+                  format: float
+                  example: 3.0
+                temperatura_in:
+                  type: number
+                  format: float
+                  example: 60.0
+                temperatura_out:
+                  type: number
+                  format: float
+                  example: 65.0
+                vibracion_x:
+                  type: number
+                  format: float
+                  example: 0.5
+      responses:
+        '201':
+          description: Predicción creada exitosamente.
+        '400':
+          description: Datos de entrada inválidos.
+        '500':
+          description: Error interno del servidor.
+```
+
+### Descripción de los Endpoints:
+
+1. **/equipos**:
+   - **GET**: Lista todos los equipos, con soporte para paginación y ordenamiento.
+   - **POST**: Permite registrar un nuevo equipo con sus detalles básicos.
+
+2. **/mediciones**:
+   - **GET**: Obtiene las mediciones de los sensores de los equipos, con posibilidad de filtrar por rango de fechas y por equipo.
+   - **POST**: Registra una nueva medición de los sensores para un equipo específico.
+
+3. **/predicciones**:
+   - **GET**: Lista las predicciones generadas, permitiendo filtrar por equipo o rango de fechas.
+   - **POST**: Crea una nueva predicción basada en las mediciones recientes de un equipo.
+
 
 ---
 
