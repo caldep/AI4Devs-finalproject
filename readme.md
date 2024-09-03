@@ -259,15 +259,113 @@ La infraestructura del proyecto es una arquitectura basada en los servicios de A
 ---
 
 ## 3. Modelo de Datos
+A continuación se presenta el modelo de datos NoSQL del sistema predictivo de mantenimiento de equipos.
 
 ### **3.1. Diagrama del modelo de datos:**
 
-> Recomendamos usar mermaid para el modelo de datos, y utilizar todos los parámetros que permite la sintaxis para dar el máximo detalle, por ejemplo las claves primarias y foráneas.
+```mermaid
+erDiagram
+    EQUIPO {
+        String id PK
+        String nombre
+        String tipo
+        String ubicacion
+        Date fecha_instalacion
+    }
+    SENSOR_DATOS {
+        String id PK
+        String equipo_id FK
+        Date fecha
+        Float frecuencia
+        Float corriente
+        Float presion_in
+        Float presion_out
+        Float temperatura_in
+        Float temperatura_out
+        Float vibracion_x
+    }
+    PREDICCION {
+        String id PK
+        String equipo_id FK
+        Date fecha
+        String tipo_evento
+        Float probabilidad
+        String tipo_evento_real
+        Float frecuencia
+        Float corriente
+        Float presion_in
+        Float presion_out
+        Float temperatura_in
+        Float temperatura_out
+        Float vibracion_x
+    }
+    HISTORIAL_ALARMAS {
+        String id PK
+        String prediccion_id FK
+        Date fecha_creacion
+        String tipo_evento
+        String mensaje_alerta
+        List destinatarios
+        Date fecha_envio
+    }
 
+    EQUIPO ||--o{ SENSOR_DATOS : "tiene"
+    EQUIPO ||--o{ PREDICCION : "genera"
+    PREDICCION ||--o| HISTORIAL_ALARMAS : "dispara"
+```
 
 ### **3.2. Descripción de entidades principales:**
 
-> Recuerda incluir el máximo detalle de cada entidad, como el nombre y tipo de cada atributo, descripción breve si procede, claves primarias y foráneas, relaciones y tipo de relación, restricciones (unique, not null…), etc.
+1. **EQUIPO**: Representa cada equipo monitoreado. 
+   - **Atributos**:
+     - `id`: Identificador único del equipo.
+     - `nombre`: Nombre del equipo.
+     - `tipo`: Tipo de equipo.
+     - `ubicacion`: Ubicación física del equipo.
+     - `fecha_instalacion`: Fecha en la que el equipo fue instalado.
+   - **Relaciones**: 
+     - Relaciona uno a muchos con `SENSOR_DATOS` y `PREDICCION`.
+
+2. **SENSOR_DATOS**: Almacena las mediciones de los sensores en tiempo real.
+   - **Atributos**:
+     - `id`: Identificador único del conjunto de datos de sensor.
+     - `equipo_id`: Relación con el equipo del cual se obtienen las mediciones.
+     - `fecha`: Fecha y hora en que se tomaron las mediciones.
+     - `frecuencia`, `corriente`, `presion_in`, `presion_out`, `temperatura_in`, `temperatura_out`, `vibracion_x`: Valores de las señales capturadas.
+   - **Relaciones**: 
+     - Relacionado con `EQUIPO` mediante `equipo_id`.
+
+3. **PREDICCION**: Documenta las predicciones de posibles fallos basados en los datos recibidos de los sensores.
+   - **Atributos**:
+     - `id`: Identificador único de la predicción.
+     - `equipo_id`: Identifica el equipo al que corresponde la predicción.
+     - `fecha`: Fecha y hora en la que se realizó la predicción.
+     - `tipo_evento`: Tipo de evento predicho.
+     - `probabilidad`: Probabilidad del evento predicho.
+     - `tipo_evento_real`: Evento real que ocurrió.
+     - `frecuencia`, `corriente`, `presion_in`, `presion_out`, `temperatura_in`, `temperatura_out`, `vibracion_x`: Valores que acompañaron la predicción para referencias y análisis posteriores.
+   - **Relaciones**: 
+     - Relacionado con `EQUIPO` y `HISTORIAL_ALARMAS`.
+
+4. **ALARMA**: Registro de las alarmas generadas por las predicciones.
+   - **Atributos**:
+     - `id`: Identificador único de la alarma.
+     - `prediccion_id`: Relación con la predicción que disparó la alarma.
+     - `fecha_creacion`: Fecha en que se creó la alarma.
+     - `tipo_evento`: Tipo de evento que generó la alarma.
+     - `mensaje_alerta`: Descripción o mensaje de la alerta enviada.
+     - `destinatarios`: Lista de destinatarios de la alarma.
+     - `fecha_envio`: Fecha en que se envió la alerta.
+   - **Relaciones**: 
+     - Relacionada con `PREDICCION` por `prediccion_id`.
+
+### Justificación del Modelo:
+
+- **Eficiencia de Consultas**: Diseñado para consultas rápidas y eficientes, clave en un sistema que opera en tiempo real y necesita acceder rápidamente a datos históricos y predicciones.
+- **Escalabilidad**: El diseño permite la fácil incorporación de nuevos tipos de eventos, sensores, o equipos sin grandes cambios estructurales.
+- **Seguridad y Control**: Cada documento está relacionado con el mínimo de datos necesarios, lo que facilita políticas de acceso basadas en necesidades específicas.
+
+
 
 ---
 
