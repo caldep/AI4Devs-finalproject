@@ -927,6 +927,416 @@ Antes de comenzar, hazme las preguntas que necesites. No generes el modelo de da
 > Almacenar el "tipo de evento" dentro de los documentos `PREDICCION` y `HISTORIAL_ALARMAS` sigue las mejores prácticas para bases de datos NoSQL al priorizar rendimiento, simplicidad y escalabilidad sobre la normalización estricta que es más común en sistemas relacionales. Esto resulta en un diseño más eficiente y fácil de mantener, especialmente en un sistema de monitoreo y predicción de fallos en tiempo real como el que se está desarrollando.
 ---
 
+**Prompt 4:**
+Aplica los siguientes ajustes en el modelo de datos:
+1. Cambia el nombre del documento HISTORIAL_ALARMAS por ALERTA
+2. Cada equipo tiene un conjunto de operadores que los mantiene, hace falta almacenar estos operadores con sus números de telñefonos y correos electrónicos porque a ellos se les enviará el mensaje de alerta.
+
+Antes de comenzar, hazme las preguntas que necesites. No generes el modelo actualizado aún.
+
+> Para ajustar correctamente el modelo de datos según los cambios que necesitas, tengo algunas preguntas para asegurarme de que se implementen los ajustes de la forma más adecuada:
+>
+> 1. **Operadores de Mantenimiento**:
+>    - ¿Cada equipo puede tener múltiples operadores, y los operadores pueden estar asignados a varios equipos? Esto ayudará a definir la relación entre equipos y operadores.
+>    - ¿Qué atributos específicos necesitas almacenar para cada operador? Además de nombre, teléfono y correo, ¿hay algún otro detalle relevante, como el rol específico, turno, o ubicación?
+>
+> 2. **Alertas**:
+>    - En el documento `ALERTA`, ¿los destinatarios de las alertas ahora incluirán tanto a los operadores específicos de cada equipo como otros posibles destinatarios generales?
+>    - ¿Se requiere almacenar alguna referencia directa al operador que recibió la alerta dentro del documento `ALERTA`?
+>
+> 3. **Consultas Comunes Relacionadas con Operadores**:
+>    - ¿Se espera realizar consultas frecuentes sobre los operadores, como buscar todos los equipos mantenidos por un operador específico o viceversa?
+>    - ¿Qué tipo de consultas o informes necesitas que incluyan información de los operadores? Esto puede afectar cómo se estructuran y se relacionan los datos.
+>
+> Estos detalles ayudarán a crear un modelo más preciso y optimizado para las necesidades del sistema predictivo de mantenimiento.
+
+
+**Prompt 5:**
+1.1. Si.
+1.2 Si, agrega el rol y el turno.
+2.1 Si.
+2.2 No.
+3.1 Si, además de las consultas que propones, se podría consultar operadores que se les envió la alerta.
+3.2 las principales consultas del sistema es las gráficas de tendencias de los valores de los sensores y gráficas de predicciones. en cuanto a los operadores se podría consultar el número de equipos a su cargo, cantidad de alarmas enviadas, cantidad de equipos con fallas. 
+
+> Gracias por los detalles proporcionados. Con la nueva información, ajustaré el modelo de datos para incorporar a los operadores de mantenimiento, relacionándolos con los equipos, y renombraré el documento `HISTORIAL_ALARMAS` a `ALERTA`. También me aseguraré de que las consultas principales relacionadas con los operadores sean fáciles de implementar. A continuación, detallaré cómo ajustaré el modelo y las relaciones entre los documentos.
+>
+> ### Ajustes en el Modelo de Datos:
+>
+> 1. **Nuevo Documento `OPERADOR`**:
+>    - Este documento almacenará la información de los operadores asignados a los equipos, con detalles como el rol y turno, para enviar alertas adecuadamente.
+>    - Relación con el documento `EQUIPO` para definir qué operadores son responsables de cada equipo.
+.
+>
+> 2. **Documento `ALERTA`**:
+>    - Cambio de nombre desde `HISTORIAL_ALARMAS` a `ALERTA`.
+>    - Relacionado con los operadores y equipos para llevar el registro de destinatarios y equipos involucrados en cada alerta.
+>
+> ### Generaré el modelo de datos actualizado, teniendo en cuenta estos cambios y relaciones, y explicaré cómo cada documento y relación satisface los requisitos de las consultas y funcionalidades especificadas. Aquí te lo presento:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     SENSOR {
+>         string sensor_id
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string unidad
+>         date   fecha_instalacion
+>     }
+>
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>     }
+>
+>     OPERADOR {
+>         string operador_id
+>         string nombre
+>         string telefono
+>         string email
+>         string rol
+>         string turno
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     PREDICCION {
+>         string prediccion_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento
+>         float  probabilidad
+>     }
+>
+>     RESULTADO_PREDICCION {
+>         string resultado_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string equipo_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         string destinatarios
+>         date   fecha_envio
+>     }
+>
+>     %% Relaciones
+>     EQUIPO ||--o{ SENSOR : tiene
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ PREDICCION : tiene
+>     EQUIPO ||--o{ RESULTADO_PREDICCION : genera
+>     EQUIPO ||--o{ ALERTA : genera
+>     EQUIPO ||--o{ OPERADOR : asignado_a
+>     OPERADOR ||--o{ ALERTA : recibe
+> ```
+>
+> ### Descripción de los Documentos y Relación:
+>
+> 1. **SENSOR**:
+>    - Atributos: Identificador, nombre, tipo, unidad de medida, y fecha de instalación.
+>    - Relacionado con `EQUIPO`, ya que cada equipo puede tener múltiples sensores.
+>
+> 2. **EQUIPO**:
+>    - Atributos: Identificación única, nombre, tipo, ubicación, y fecha de instalación.
+>    - Relacionado con `OPERADOR`, `MEDICION`, `PREDICCION`, `RESULTADO_PREDICCION`, y `ALERTA`.
+>
+> 3. **OPERADOR**:
+>    - Atributos: Identificador, nombre, teléfono, correo, rol, y turno.
+>    - Relacionado con `EQUIPO` y `ALERTA`, permitiendo identificar qué operadores mantienen cada equipo y a quién se envían las alertas.
+>
+> 4. **MEDICION**:
+>    - Atributos: Datos de las mediciones de los sensores, incluyendo las diferentes variables monitoreadas (frecuencia, corriente, presión, temperatura, vibración).
+>    - Relacionado con `EQUIPO`, capturando mediciones específicas para análisis.
+>
+> 5. **PREDICCION**:
+>    - Atributos: Fecha, equipo involucrado, tipo de evento predicho, y probabilidad asociada.
+>    - Relacionado con `EQUIPO` para identificar las predicciones en función de los equipos.
+>
+> 6. **RESULTADO_PREDICCION**:
+>    - Atributos: Datos detallados sobre los eventos predichos y los reales, incluyendo todas las señales de los sensores.
+>    - Relacionado con `EQUIPO`, permitiendo el seguimiento de la precisión de las predicciones.
+>
+> 7. **ALERTA**:
+>    - Atributos: Información sobre la alerta, incluyendo fecha, tipo de evento, mensaje, destinatarios, y fecha de envío.
+>    - Relacionado con `EQUIPO` y `OPERADOR` para registrar qué alertas se enviaron y a quién.
+>
+> ### Explicación de las Relaciones:
+> - **`EQUIPO` y `OPERADOR`**: Cada equipo puede tener múltiples operadores responsables de su mantenimiento, facilitando la consulta de equipos por operador y viceversa.
+> - **`ALERTA` y `OPERADOR`**: Relaciona las alertas con los operadores específicos que las reciben, permitiendo seguimiento de notificaciones y respuestas.
+>
+> Este modelo cumple con los requisitos del sistema, optimizando consultas y asegurando que los datos estén bien estructurados y accesibles para las funciones clave del sistema predictivo.
+
+**Prompt 6:**
+No estoy de acuerdo con el nuevo diseño:
+1. Los documentos SENSOR y PREDICCIÓN se pueden eliminar.
+2. Falta la relación muchos a muchos entre EQUIPO y OPERADOR.
+3. Falta la relación muchos a muchos entre ALERTA y OPERADOR.
+
+Analiza los cambios, aplica y detalla nuevamente el modelo. 
+
+> Gracias por tus observaciones; aplicaré los cambios que has mencionado para ajustar el modelo de datos y reflejar correctamente las relaciones muchos a muchos entre `EQUIPO` y `OPERADOR`, así como entre `ALERTA` y `OPERADOR`. Eliminaré los documentos `SENSOR` y `PREDICCION`, ya que su información puede ser gestionada de manera más eficiente dentro de los documentos restantes.
+>
+> ### Cambios a Aplicar:
+>
+> 1. **Eliminación de los Documentos `SENSOR` y `PREDICCION`**:
+>    - La información del sensor puede ser manejada dentro de las mediciones y los atributos de los equipos.
+>    - Las predicciones se integran en `RESULTADO_PREDICCION`, capturando tanto el evento predicho como el real.
+>
+> 2. **Relación Muchos a Muchos entre `EQUIPO` y `OPERADOR`**:
+>    - Los operadores pueden estar asignados a múltiples equipos, y cada equipo puede tener múltiples operadores. Se implementará una relación muchos a muchos mediante un esquema adecuado en NoSQL.
+>
+> 3. **Relación Muchos a Muchos entre `ALERTA` y `OPERADOR`**:
+>    - Cada alerta puede ser recibida por múltiples operadores, y un operador puede recibir múltiples alertas.
+>
+> ### Modelo Actualizado en Formato Mermaid:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>         list   operadores_ids 
+>     }
+>
+>     OPERADOR {
+>         string operador_id
+>         string nombre
+>         string telefono
+>         string email
+>         string rol
+>         string turno
+>         list   equipos_ids    
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     RESULTADO_PREDICCION {
+>         string resultado_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string equipo_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         list   destinatarios_ids 
+>         date   fecha_envio
+>     }
+>
+>     %% Relaciones
+>     EQUIPO }o--o{ OPERADOR : asignado_a
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ RESULTADO_PREDICCION : genera
+>     EQUIPO ||--o{ ALERTA : genera
+>     ALERTA }o--o{ OPERADOR : enviada_a
+> ```
+>
+> ### Explicación de los Cambios y Relaciones:
+>
+> 1. **EQUIPO**:
+>    - Atributos: Identificador, nombre, tipo, ubicación, fecha de instalación, y una lista de `operadores_ids` para establecer la relación muchos a muchos con `OPERADOR`.
+>
+> 2. **OPERADOR**:
+>    - Atributos: Identificador, nombre, teléfono, correo, rol, turno, y una lista de `equipos_ids` para la relación muchos a muchos con `EQUIPO`.
+>
+> 3. **MEDICION**:
+>    - Contiene las mediciones de los sensores del equipo, capturando todos los atributos necesarios para análisis y visualización de tendencias.
+>
+> 4. **RESULTADO_PREDICCION**:
+>    - Combina la información de las predicciones y los resultados reales, permitiendo un seguimiento detallado de la efectividad de las predicciones.
+>
+> 5. **ALERTA**:
+>    - Atributos: Identificador, equipo involucrado, tipo de evento, mensaje, lista de `destinatarios_ids` para la relación con `OPERADOR`, y fecha de envío.
+>
+> ### Beneficios del Nuevo Diseño:
+>
+> - **Simplificación**: Al eliminar los documentos redundantes, el modelo se vuelve más directo y fácil de mantener.
+> - **Relaciones Eficientes**: Las relaciones muchos a muchos son manejadas directamente dentro de los documentos mediante listas de identificadores, manteniendo la flexibilidad y la facilidad de acceso.
+> - **Optimización de Consultas**: Permite consultas rápidas sobre operadores responsables de los equipos y los eventos de alertas enviados, cumpliendo con los requisitos del sistema.
+>
+> Este diseño optimizado asegura que el sistema cumpla con sus objetivos de manera eficiente y escalable, manteniendo la simplicidad en el manejo de datos complejos y relaciones críticas para el mantenimiento predictivo de equipos.
+
+**Prompt 7:**
+Aplica los siguientes cambios en el modelo de datos:
+1. Renombra RESULTADO_PREDICCIÓN por PREDICCIÓN
+2. la ALERTA es generda por la PREDICCIÓN, no por el equipo.
+
+> Gracias por los ajustes propuestos. A continuación, aplicaré los cambios solicitados:
+>
+> ### Cambios a Aplicar:
+>
+> 1. **Renombrar `RESULTADO_PREDICCION` por `PREDICCION`**:
+>    - El documento `RESULTADO_PREDICCION` pasará a llamarse `PREDICCION`, manteniendo los mismos atributos y relaciones.
+>
+> 2. **Modificar la Relación de `ALERTA`**:
+>    - La alerta será generada por una `PREDICCION` y no directamente por un `EQUIPO`. Se actualizará la relación correspondiente.
+>
+> ### Modelo de Datos Actualizado en Formato Mermaid:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>         list   operadores_ids 
+>     }
+>
+>     OPERADOR {
+>         string operador_id
+>         string nombre
+>         string telefono
+>         string email
+>         string rol
+>         string turno
+>         list   equipos_ids    
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     PREDICCION {
+>         string prediccion_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string prediccion_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         list   destinatarios_ids 
+>         date   fecha_envio
+>     }
+>
+>     %% Relaciones
+>     EQUIPO }o--o{ OPERADOR : asignado_a
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ PREDICCION : genera
+>     PREDICCION ||--o{ ALERTA : genera
+>     ALERTA }o--o{ OPERADOR : enviada_a
+> ```
+>
+> ### Descripción de los Documentos y Relaciones:
+>
+> 1. **EQUIPO**:
+>    - **Atributos**: Identificación única, nombre, tipo, ubicación, fecha de instalación, y una lista de `operadores_ids` que establece la relación con `OPERADOR`.
+>    - **Relaciones**: Genera `MEDICION` y `PREDICCION`, y está relacionado con `OPERADOR`.
+>
+> 2. **OPERADOR**:
+>    - **Atributos**: Identificador, nombre, teléfono, correo, rol, turno, y una lista de `equipos_ids`.
+>    - **Relaciones**: Relacionado muchos a muchos con `EQUIPO` y `ALERTA`, permitiendo gestionar la asignación de alertas y responsabilidades de los operadores.
+>
+> 3. **MEDICION**:
+>    - **Atributos**: Registra todas las mediciones de los sensores del equipo.
+>    - **Relaciones**: Está vinculada a `EQUIPO`, capturando las mediciones para análisis.
+>
+> 4. **PREDICCION**:
+>    - **Atributos**: Datos detallados de la predicción, incluyendo tanto el evento predicho como el real y las mediciones de los sensores.
+>    - **Relaciones**: Generada por `EQUIPO` y es la fuente que origina una `ALERTA`.
+>
+> 5. **ALERTA**:
+>    - **Atributos**: Información sobre la alerta generada a partir de una predicción, con detalles sobre a quién fue enviada.
+>    - **Relaciones**: Generada por `PREDICCION` y enviada a `OPERADOR`.
+>
+> ### Beneficios del Ajuste:
+>
+> - **Claridad en la Relación de Alertas**: El ajuste refleja que las alertas son una consecuencia directa de las predicciones, proporcionando un flujo lógico y claro de eventos dentro del sistema.
+> - **Eficiencia en las Consultas**: Permite consultas más precisas y directas sobre qué predicciones generaron alertas, mejorando la capacidad de diagnóstico y respuesta.
+> - **Mantenimiento y Escalabilidad Mejorados**: Al eliminar redundancias y simplificar las relaciones, el modelo se vuelve más fácil de escalar y mantener, alineándose con las mejores prácticas de diseño NoSQL.
+>
+> Este diseño revisado asegura que las funcionalidades críticas del sistema estén bien representadas y optimizadas para el uso previsto, apoyando tanto la operación continua como el mantenimiento a largo plazo.
+
+
 ### 4. Especificación de la API
 
 **Prompt 1:**

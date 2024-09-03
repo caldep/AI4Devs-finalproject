@@ -265,70 +265,95 @@ A continuación se presenta el modelo de datos NoSQL del sistema predictivo de m
 
 ```mermaid
 erDiagram
+    %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+
+    %% Documentos y sus atributos
     EQUIPO {
-        String id PK
-        String nombre
-        String tipo
-        String ubicacion
-        Date fecha_instalacion
-    }
-    SENSOR_DATOS {
-        String id PK
-        String equipo_id FK
-        Date fecha
-        Float frecuencia
-        Float corriente
-        Float presion_in
-        Float presion_out
-        Float temperatura_in
-        Float temperatura_out
-        Float vibracion_x
-    }
-    PREDICCION {
-        String id PK
-        String equipo_id FK
-        Date fecha
-        String tipo_evento
-        Float probabilidad
-        String tipo_evento_real
-        Float frecuencia
-        Float corriente
-        Float presion_in
-        Float presion_out
-        Float temperatura_in
-        Float temperatura_out
-        Float vibracion_x
-    }
-    HISTORIAL_ALARMAS {
-        String id PK
-        String prediccion_id FK
-        Date fecha_creacion
-        String tipo_evento
-        String mensaje_alerta
-        List destinatarios
-        Date fecha_envio
+        string equipo_id
+        string nombre
+        string tipo
+        string ubicacion
+        date   fecha_instalacion
+        %%Relación muchos a muchos con OPERADOR
+        list   operadores_ids  
     }
 
-    EQUIPO ||--o{ SENSOR_DATOS : "tiene"
-    EQUIPO ||--o{ PREDICCION : "genera"
-    PREDICCION ||--o| HISTORIAL_ALARMAS : "dispara"
+    OPERADOR {
+        string operador_id
+        string nombre
+        string telefono
+        string email
+        string rol
+        string turno
+        %% Relación muchos a muchos con EQUIPO
+        list   equipos_ids     
+    }
+
+    MEDICION {
+        string medicion_id
+        string equipo_id
+        date   fecha
+        float  frecuencia
+        float  corriente
+        float  presion_in
+        float  presion_out
+        float  temperatura_in
+        float  temperatura_out
+        float  vibracion_x
+    }
+
+    PREDICCION {
+        string prediccion_id
+        string equipo_id
+        date   fecha
+        string tipo_evento_predictivo
+        float  probabilidad
+        string tipo_evento_real
+        float  frecuencia
+        float  corriente
+        float  presion_in
+        float  presion_out
+        float  temperatura_in
+        float  temperatura_out
+        float  vibracion_x
+    }
+
+    ALERTA {
+        string alerta_id
+        string prediccion_id
+        date   fecha_creacion
+        string tipo_evento
+        string mensaje_alerta
+        %% Relación muchos a muchos con OPERADOR
+        list   destinatarios_ids  
+        date   fecha_envio
+    }
+
+    %% Relaciones
+    EQUIPO }o--o{ OPERADOR : asignado_a
+    EQUIPO ||--o{ MEDICION : genera
+    EQUIPO ||--o{ PREDICCION : genera
+    PREDICCION ||--o{ ALERTA : genera
+    ALERTA }o--o{ OPERADOR : enviada_a
+
 ```
 
 ### **3.2. Descripción de entidades principales:**
 
 1. **EQUIPO**: Representa cada equipo monitoreado. 
    - **Atributos**:
-     - `id`: Identificador único del equipo.
+     - `equipo_id`: Identificador único del equipo.
      - `nombre`: Nombre del equipo.
      - `tipo`: Tipo de equipo.
      - `ubicacion`: Ubicación física del equipo.
      - `fecha_instalacion`: Fecha en la que el equipo fue instalado.
+     - `operadores_ids`: Lista de identificadores de operadores asignados al equipo.
    - **Relaciones**: 
-     - Relaciona uno a muchos con `SENSOR_DATOS` y `PREDICCION`.
+     - Relaciona uno a muchos con `MEDICIÓN` y `PREDICCION`.
 
-2. **SENSOR_DATOS**: Almacena las mediciones de los sensores en tiempo real.
+2. **MEDICIÓN**: Almacena las mediciones de los sensores en tiempo real.
    - **Atributos**:
-     - `id`: Identificador único del conjunto de datos de sensor.
+     - `medicion_id`: Identificador único del conjunto de datos de mediciones.
      - `equipo_id`: Relación con el equipo del cual se obtienen las mediciones.
      - `fecha`: Fecha y hora en que se tomaron las mediciones.
      - `frecuencia`, `corriente`, `presion_in`, `presion_out`, `temperatura_in`, `temperatura_out`, `vibracion_x`: Valores de las señales capturadas.
@@ -337,27 +362,40 @@ erDiagram
 
 3. **PREDICCION**: Documenta las predicciones de posibles fallos basados en los datos recibidos de los sensores.
    - **Atributos**:
-     - `id`: Identificador único de la predicción.
+     - `predicion_id`: Identificador único de la predicción.
      - `equipo_id`: Identifica el equipo al que corresponde la predicción.
      - `fecha`: Fecha y hora en la que se realizó la predicción.
-     - `tipo_evento`: Tipo de evento predicho.
+     - `tipo_evento_predictivo`: Tipo de evento predicho.
      - `probabilidad`: Probabilidad del evento predicho.
      - `tipo_evento_real`: Evento real que ocurrió.
      - `frecuencia`, `corriente`, `presion_in`, `presion_out`, `temperatura_in`, `temperatura_out`, `vibracion_x`: Valores que acompañaron la predicción para referencias y análisis posteriores.
    - **Relaciones**: 
-     - Relacionado con `EQUIPO` y `HISTORIAL_ALARMAS`.
+     - Relacionado con `EQUIPO` y `ALERTA`.
 
-4. **ALARMA**: Registro de las alarmas generadas por las predicciones.
+4. **ALERTA**: Registro de las alertas generadas por las predicciones.
    - **Atributos**:
-     - `id`: Identificador único de la alarma.
+     - `alerta_id`: Identificador único de la alarma.
      - `prediccion_id`: Relación con la predicción que disparó la alarma.
      - `fecha_creacion`: Fecha en que se creó la alarma.
      - `tipo_evento`: Tipo de evento que generó la alarma.
      - `mensaje_alerta`: Descripción o mensaje de la alerta enviada.
-     - `destinatarios`: Lista de destinatarios de la alarma.
+     - `destinatarios_ids`: Lista de destinatarios de la alarma.
      - `fecha_envio`: Fecha en que se envió la alerta.
    - **Relaciones**: 
      - Relacionada con `PREDICCION` por `prediccion_id`.
+     - Relacionada con `OPERADOR` por `operadores_ids`.
+
+5. **OPERADOR**: Personal de mantenimiento del equipo.
+   - **Atributos**:
+     - `operador_id`: Identificador único del operador.
+     - `nombre`: nombre del operador.
+     - `telefono`: número de teléfono del operador.
+     - `email`: correo electrónico del operador.
+     - `rol`: responsabilidad del operador en el mantenimiento.
+     - `equipos_ids`: Lista de equipos asignados.
+   - **Relaciones**: 
+     - Relacionada con `EQUIPO` por `equipos_ids`.
+     - Relacionada con `ALERTA` por `destinatarios_ids`.
 
 ### Justificación del Modelo:
 
