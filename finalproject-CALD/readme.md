@@ -167,7 +167,7 @@ La arquitectura hexagonal se elige para este sistema predictivo de mantenimiento
 │   │   │   │   ├── com.example.mantenimiento/
 │   │   │   │   │   ├── application/             # Pruebas de casos de uso y servicios de aplicación.
 │   │   │   │   │   ├── domain/                  # Pruebas unitarias de la lógica de negocio (TDD).
-│   │   │   │   ��   ├── infrastructure/          # Pruebas de integración con adaptadores.
+│   │   │   │   │   ├── infrastructure/          # Pruebas de integración con adaptadores.
 │   │   │   │   │   ├── shared/                  # Pruebas de utilidades y mapeadores.
 │   │   │
 │   ├── Dockerfile                               # Archivo Docker para la imagen del backend.
@@ -273,8 +273,19 @@ erDiagram
         string tipo
         string ubicacion
         date   fecha_instalacion
-        %% Lista de direcciones de correo electrónico de los operadores
-        list   emails_operadores  
+        %%Relación muchos a muchos con OPERADOR
+        list   operadores_ids  
+    }
+
+    OPERADOR {
+        string operador_id
+        string nombre
+        string telefono
+        string email
+        string rol
+        string turno
+        %% Relación muchos a muchos con EQUIPO
+        list   equipos_ids     
     }
 
     MEDICION {
@@ -312,20 +323,18 @@ erDiagram
         date   fecha_creacion
         string tipo_evento
         string mensaje_alerta
-        %% Cambiado de fecha_envio a fecha_procesado
-        date   fecha_procesado  
-        %% Lista de direcciones de correo electrónico
-        list   emails_destinatarios  
-        %% Estado de la alerta (enviada, error, etc.)
-        string estado  
-        %% Detalle del estado de la alerta (descripción del error, etc.)
-        string detalle_estado  
+        %% Relación muchos a muchos con OPERADOR
+        list   destinatarios_ids  
+        date   fecha_envio
     }
 
     %% Relaciones
+    EQUIPO }o--o{ OPERADOR : asignado_a
     EQUIPO ||--o{ MEDICION : genera
     EQUIPO ||--o{ PREDICCION : genera
     PREDICCION ||--o{ ALERTA : genera
+    ALERTA }o--o{ OPERADOR : enviada_a
+
 ```
 
 ### **3.2. Descripción de entidades principales:**
@@ -337,7 +346,7 @@ erDiagram
      - `tipo`: Tipo de equipo.
      - `ubicacion`: Ubicación física del equipo.
      - `fecha_instalacion`: Fecha en la que el equipo fue instalado.
-     - `emails_operadores`: Lista de direcciones de correo electrónico de los operadores asignados al equipo.
+     - `operadores_ids`: Lista de identificadores de operadores asignados al equipo.
    - **Relaciones**: 
      - Relaciona uno a muchos con `MEDICIÓN` y `PREDICCION`.
 
@@ -369,12 +378,23 @@ erDiagram
      - `fecha_creacion`: Fecha en que se creó la alarma.
      - `tipo_evento`: Tipo de evento que generó la alarma.
      - `mensaje_alerta`: Descripción o mensaje de la alerta enviada.
-     - `fecha_procesado`: Fecha en que se envió la alerta.
-     - `emails_destinatarios`: Lista de direcciones de correo electrónico a las que se dirige la alerta.
-     - `estado`: Estado de la alerta (enviada, error, etc.).
-     - `detalle_estado`: Detalle del estado de la alerta (descripción del error, etc.).
+     - `destinatarios_ids`: Lista de destinatarios de la alarma.
+     - `fecha_envio`: Fecha en que se envió la alerta.
    - **Relaciones**: 
      - Relacionada con `PREDICCION` por `prediccion_id`.
+     - Relacionada con `OPERADOR` por `operadores_ids`.
+
+5. **OPERADOR**: Personal de mantenimiento del equipo.
+   - **Atributos**:
+     - `operador_id`: Identificador único del operador.
+     - `nombre`: nombre del operador.
+     - `telefono`: número de teléfono del operador.
+     - `email`: correo electrónico del operador.
+     - `rol`: responsabilidad del operador en el mantenimiento.
+     - `equipos_ids`: Lista de equipos asignados.
+   - **Relaciones**: 
+     - Relacionada con `EQUIPO` por `equipos_ids`.
+     - Relacionada con `ALERTA` por `destinatarios_ids`.
 
 ### Justificación del Modelo:
 
@@ -395,7 +415,7 @@ openapi: 3.0.0
 info:
   title: API Sistema Predictivo de Mantenimiento de Equipos
   version: 1.0.0
-  description: API para gestionar equipos, mediciones, predicciones y alertas del sistema predictivo de mantenimiento de equipos.
+  description: API para gestionar equipos, mediciones y predicciones del sistema predictivo de mantenimiento de equipos.
 
 paths:
   /equipos:
@@ -447,64 +467,11 @@ paths:
                   type: string
                   format: date
                   example: 2023-08-01
-                emails_operadores:
-                  type: array
-                  items:
-                    type: string
-                    format: email
-                  example: ["operador1@example.com", "operador2@example.com"]
       responses:
         '201':
           description: Equipo creado exitosamente.
         '400':
           description: Datos de entrada inválidos.
-        '500':
-          description: Error interno del servidor.
-
-  /equipos/{equipo_id}:
-    put:
-      summary: Actualizar un equipo existente
-      description: Actualiza los detalles de un equipo existente en el sistema.
-      parameters:
-        - in: path
-          name: equipo_id
-          required: true
-          schema:
-            type: string
-          description: ID del equipo a actualizar.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nombre:
-                  type: string
-                  example: Compresor A
-                tipo:
-                  type: string
-                  example: Compresor
-                ubicacion:
-                  type: string
-                  example: Planta Norte
-                fecha_instalacion:
-                  type: string
-                  format: date
-                  example: 2023-08-01
-                emails_operadores:
-                  type: array
-                  items:
-                    type: string
-                    format: email
-                  example: ["operador1@example.com", "operador2@example.com"]
-      responses:
-        '200':
-          description: Equipo actualizado exitosamente.
-        '400':
-          description: Datos de entrada inválidos.
-        '404':
-          description: Equipo no encontrado.
         '500':
           description: Error interno del servidor.
 
@@ -679,79 +646,6 @@ paths:
           description: Datos de entrada inválidos.
         '500':
           description: Error interno del servidor.
-
-  /alertas:
-    get:
-      summary: Obtener todas las alertas
-      description: Retorna una lista de todas las alertas con sus detalles.
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: Página de los resultados a obtener.
-        - in: query
-          name: size
-          schema:
-            type: integer
-          description: Cantidad de resultados por página.
-        - in: query
-          name: sort
-          schema:
-            type: string
-          description: Criterio de ordenamiento (e.g., fecha_creacion, tipo_evento).
-      responses:
-        '200':
-          description: Lista de alertas obtenida exitosamente.
-        '500':
-          description: Error interno del servidor.
-
-    post:
-      summary: Crear una nueva alerta
-      description: Registra una nueva alerta en el sistema.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                prediccion_id:
-                  type: string
-                  example: 12345
-                fecha_creacion:
-                  type: string
-                  format: date-time
-                  example: 2024-08-29T14:00:00Z
-                tipo_evento:
-                  type: string
-                  example: Fallo de Motor
-                mensaje_alerta:
-                  type: string
-                  example: "Se ha detectado un posible fallo en el motor."
-                fecha_procesado:
-                  type: string
-                  format: date-time
-                  example: 2024-08-29T14:05:00Z
-                emails_destinatarios:
-                  type: array
-                  items:
-                    type: string
-                    format: email
-                  example: ["operador1@example.com", "operador2@example.com"]
-                estado:
-                  type: string
-                  example: "enviada"
-                detalle_estado:
-                  type: string
-                  example: "Alerta enviada exitosamente."
-      responses:
-        '201':
-          description: Alerta creada exitosamente.
-        '400':
-          description: Datos de entrada inválidos.
-        '500':
-          description: Error interno del servidor.
 ```
 
 ### Descripción de los Endpoints:
@@ -759,19 +653,15 @@ paths:
 1. **/equipos**:
    - **GET**: Lista todos los equipos, con soporte para paginación y ordenamiento.
    - **POST**: Permite registrar un nuevo equipo con sus detalles básicos.
-   - **PUT**: Actualiza los detalles de un equipo existente.
 
-2. **/alertas**:
-   - **GET**: Lista todas las alertas, con soporte para paginación y ordenamiento.
-   - **POST**: Permite registrar una nueva alerta con sus detalles básicos.
-
-3. **/mediciones**:
+2. **/mediciones**:
    - **GET**: Obtiene las mediciones de los sensores de los equipos, con posibilidad de filtrar por rango de fechas y por equipo.
    - **POST**: Registra una nueva medición de los sensores para un equipo específico.
 
-4. **/predicciones**:
+3. **/predicciones**:
    - **GET**: Lista las predicciones generadas, permitiendo filtrar por equipo o rango de fechas.
    - **POST**: Crea una nueva predicción basada en las mediciones recientes de un equipo.
+
 
 ---
 
