@@ -1336,6 +1336,10 @@ Aplica los siguientes cambios en el modelo de datos:
 >
 > Este diseño revisado asegura que las funcionalidades críticas del sistema estén bien representadas y optimizadas para el uso previsto, apoyando tanto la operación continua como el mantenimiento a largo plazo.
 
+---
+
+los siguientes prompts se generan para simplificar el mínimo producto viable para el sistema predictivo de mantenimiento de equipos.
+
 **Prompt 8:**
 vamos a simplificar el modelo de datos, actualmente se tiene la entidad OPERADOR, cuya principal función es determinar las direcciones de correo electrónico de los operadores para enviarles las alertas de un evento. Se requiere eliminar esa entidad OPERADOR y agregar en la entidad EQUIPO un atributo que contenga la lista de direcciones de correo eléctronico que se les enviará la alerta ante la predicción de un fallo. Ajusta el diagrama entidad relación manteniendo el formato mermaid.
 
@@ -1434,6 +1438,7 @@ Antes de continuar, hazme las preguntas que necesites. No apliques los cambios h
 >
 > Si todo está correcto, procederé a aplicar estos cambios.
 
+**Prompt 10:**
 
 falta agregar en la entidad ALERTA la lista de los correos electrónicos a los cuales va dirigida la alerta
 
@@ -1503,8 +1508,250 @@ falta agregar en la entidad ALERTA la lista de los correos electrónicos a los c
 >
 > Si todo está correcto, procederé a aplicar estos cambios.
 
+**Prompt 11:**
+En la entidad ALERTA agrega además dos atributos, uno  que permita establecer el estado de la alerta y otro que permita guardar el detalle del estado, es decir, que se puede almacenar si la alerta fue: enviada exitosamente o no, en el caso que se genere un error en su proceso, la descripción del error se almacene en la columna detalle del estado. Adicioanalmente, cambiar el nombre del atributo fecha_envio, por fecha_procesado
+
+> Entendido, aquí está el diagrama entidad-relación ajustado con los nuevos atributos en la entidad `ALERTA`:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>         list   correos_electronicos  %% Lista de direcciones de correo electrónico
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     PREDICCION {
+>         string prediccion_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string prediccion_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         date   fecha_procesado  %% Cambiado de fecha_envio a fecha_procesado
+>         list   correos_electronicos  %% Lista de direcciones de correo electrónico
+>         string estado  %% Estado de la alerta (enviada, error, etc.)
+>         string detalle_estado  %% Detalle del estado de la alerta (descripción del error, etc.)
+>     }
+>
+>     %% Relaciones
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ PREDICCION : genera
+>     PREDICCION ||--o{ ALERTA : genera
+> ```
+>
+> Este diagrama ahora incluye:
+> - La lista de direcciones de correo electrónico en la entidad `ALERTA`.
+> - Los nuevos atributos `estado` y `detalle_estado` en la entidad `ALERTA`.
+> - El cambio de nombre del atributo `fecha_envio` a `fecha_procesado`.
+>
+> Si todo está correcto, procederé a aplicar estos cambios.
+
+**Prompt 12:**
+para tenerlo presente como aprendizaje, los atributos o columnas en Mermaid no permiten comentarios al lado derecho del nombre de la columna, esto generar error, se permiten que los comentarios de las columnas esten en la linea inmediatamente anterior al nombre de la columna. Ejemplo:
+
+ALERTA {
+        string alerta_id
+        string prediccion_id
+        date   fecha_creacion
+        string tipo_evento
+        string mensaje_alerta
+        date   fecha_envio
+        %% Lista de direcciones de correo electrónico
+        list   correos_electronicos  
+    }
 
 
+fíjate que el comentario está justamente antes de la linea de declaración.
+
+¿se entiende? De ser afirmativo, aplica el cambio en el diagrama mermaid
+
+> Entendido, gracias por la aclaración. Aquí está el diagrama entidad-relación ajustado con los comentarios en la línea inmediatamente anterior a la declaración de los atributos:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>         %% Lista de direcciones de correo electrónico
+>         list   correos_electronicos  
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     PREDICCION {
+>         string prediccion_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string prediccion_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         %% Cambiado de fecha_envio a fecha_procesado
+>         date   fecha_procesado  
+>         %% Lista de direcciones de correo electrónico
+>         list   correos_electronicos  
+>         %% Estado de la alerta (enviada, error, etc.)
+>         string estado  
+>         %% Detalle del estado de la alerta (descripción del error, etc.)
+>         string detalle_estado  
+>     }
+>
+>     %% Relaciones
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ PREDICCION : genera
+>     PREDICCION ||--o{ ALERTA : genera
+> ```
+>
+> Este diagrama ahora incluye los comentarios en la línea inmediatamente anterior a la declaración de los atributos, siguiendo el formato correcto de Mermaid.
+
+**Prompt 13:**
+
+ahora en la entidad EQUIPO cambia el nombre del atributo correos_elctronicos, por emails_operadores
+
+> Entendido, aquí está el diagrama entidad-relación ajustado con el cambio de nombre del atributo en la entidad EQUIPO:...
+
+**Prompt 14:**
+en la entidad ALERTA modifica el nombre del atributo correos_electronicos por emails_destinatarios
+
+> Entendido, aquí está el diagrama entidad-relación ajustado con el cambio de nombre del atributo en la entidad `ALERTA`:
+>
+> ```mermaid
+> erDiagram
+>     %% Modelo de Datos NoSQL para el Sistema Predictivo de Mantenimiento de Equipos
+>
+>     %% Documentos y sus atributos
+>     EQUIPO {
+>         string equipo_id
+>         string nombre
+>         string tipo
+>         string ubicacion
+>         date   fecha_instalacion
+>         %% Lista de direcciones de correo electrónico de los operadores
+>         list   emails_operadores  
+>     }
+>
+>     MEDICION {
+>         string medicion_id
+>         string equipo_id
+>         date   fecha
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     PREDICCION {
+>         string prediccion_id
+>         string equipo_id
+>         date   fecha
+>         string tipo_evento_predictivo
+>         float  probabilidad
+>         string tipo_evento_real
+>         float  frecuencia
+>         float  corriente
+>         float  presion_in
+>         float  presion_out
+>         float  temperatura_in
+>         float  temperatura_out
+>         float  vibracion_x
+>     }
+>
+>     ALERTA {
+>         string alerta_id
+>         string prediccion_id
+>         date   fecha_creacion
+>         string tipo_evento
+>         string mensaje_alerta
+>         %% Cambiado de fecha_envio a fecha_procesado
+>         date   fecha_procesado  
+>         %% Lista de direcciones de correo electrónico
+>         list   emails_destinatarios  
+>         %% Estado de la alerta (enviada, error, etc.)
+>         string estado  
+>         %% Detalle del estado de la alerta (descripción del error, etc.)
+>         string detalle_estado  
+>     }
+>
+>     %% Relaciones
+>     EQUIPO ||--o{ MEDICION : genera
+>     EQUIPO ||--o{ PREDICCION : genera
+>     PREDICCION ||--o{ ALERTA : genera
+> ```
+>
+>
+> Este diagrama ahora incluye el cambio de nombre del atributo `correos_electronicos` a `emails_destinatarios` en la entidad `ALERTA`.
+> // End of Selection
+
+---
 
 ### 4. Especificación de la API
 
@@ -1852,7 +2099,708 @@ Solo agrega estos tres que son los prioritarios:
 >
 > Estas especificaciones se han alineado con los requerimientos de funcionalidad del sistema y siguen las mejores prácticas en la definición de APIs RESTful, asegurando una correcta gestión y acceso a los datos críticos para el mantenimiento predictivo de los equipos.
 ---
+los siguientes prompts tienen coherencia con los cambios de simplificación aplicados en el modelo de datos
 
+**Prompt 4:**
+muy bien! con estos cambios aplicados en la BD, por favor verifica si se requieren aplicar ajustes en la especificación de la API , de ser afirmativo, genera los cambios que se requieran.
+
+Antes de comenzar, hazme las preguntas que necesites. No apliques los cambios aún.  
+
+> Para asegurarme de que los cambios en la base de datos se reflejen correctamente en la especificación de la API, aquí hay algunas preguntas:
+
+> 1. **Endpoints Afectados:**
+>    - ¿Debemos actualizar los endpoints que gestionan la creación y actualización de `EQUIPO` y `ALERTA` para incluir los nuevos atributos `emails_operadores` y `emails_destinatarios`?
+
+> 2. **Formato de los Nuevos Atributos:**
+>    - ¿Los nuevos atributos `emails_operadores` y `emails_destinatarios` deben ser listas de strings en las solicitudes y respuestas de la API?
+
+> 3. **Validación de Datos:**
+>    - ¿Hay alguna validación específica que debamos aplicar a los nuevos atributos (por ejemplo, formato de correo electrónico)?
+
+> 4. **Documentación de Ejemplos:**
+>    - ¿Debemos actualizar los ejemplos de solicitudes y respuestas en la especificación de la API para reflejar los nuevos atributos?
+
+> 5. **Impacto en Otros Endpoints:**
+>    - ¿Hay algún otro endpoint que pueda verse afectado por estos cambios y que debamos revisar?
+
+> Una vez que tenga estas respuestas, podré proceder a identificar y generar los cambios necesarios en la especificación de la API.
+
+**Prompt 5:**
+1. Si.
+2. Si.
+3. Si.
+4. Si.
+5. No.
+
+> Perfecto, con esa información, aquí están los cambios necesarios en la especificación de la API para reflejar los nuevos atributos `emails_operadores` y `emails_destinatarios`.
+>
+> ### Especificación de la API Actualizada
+>
+> #### **Endpoint para Crear/Actualizar `EQUIPO`**
+>
+> ```yaml
+> /equipos:
+>   post:
+>     summary: Crear un nuevo equipo
+>     description: Registra un nuevo equipo en el sistema.
+>     requestBody:
+>       required: true
+>       content:
+>         application/json:
+>           schema:
+>             type: object
+>             properties:
+>               nombre:
+>                 type: string
+>                 example: Compresor A
+>               tipo:
+>                 type: string
+>                 example: Compresor
+>               ubicacion:
+>                 type: string
+>                 example: Planta Norte
+>               fecha_instalacion:
+>                 type: string
+>                 format: date
+>                 example: 2023-08-01
+>               emails_operadores:
+>                 type: array
+>                 items:
+>                   type: string
+>                   format: email
+>                 example: ["operador1@example.com", "operador2@example.com"]
+>     responses:
+>       '201':
+>         description: Equipo creado exitosamente.
+>       '400':
+>         description: Datos de entrada inválidos.
+>       '500':
+>         description: Error interno del servidor.
+>
+>   put:
+>     summary: Actualizar un equipo existente
+>     description: Actualiza los detalles de un equipo existente en el sistema.
+>     requestBody:
+>       required: true
+>       content:
+>         application/json:
+>           schema:
+>             type: object
+>             properties:
+>               nombre:
+>                 type: string
+>                 example: Compresor A
+>               tipo:
+>                 type: string
+>                 example: Compresor
+>               ubicacion:
+>                 type: string
+>                 example: Planta Norte
+>               fecha_instalacion:
+>                 type: string
+>                 format: date
+>                 example: 2023-08-01
+>               emails_operadores:
+>                 type: array
+>                 items:
+>                   type: string
+>                   format: email
+>                 example: ["operador1@example.com", "operador2@example.com"]
+>     responses:
+>       '200':
+>         description: Equipo actualizado exitosamente.
+>       '400':
+>         description: Datos de entrada inválidos.
+>       '404':
+>         description: Equipo no encontrado.
+>       '500':
+>         description: Error interno del servidor.
+> ```
+>
+> #### **Endpoint para Crear/Actualizar `ALERTA`**
+>
+> ```yaml
+> /alertas:
+>   post:
+>     summary: Crear una nueva alerta
+>     description: Registra una nueva alerta en el sistema.
+>     requestBody:
+>       required: true
+>       content:
+>         application/json:
+>           schema:
+>             type: object
+>             properties:
+>               prediccion_id:
+>                 type: string
+>                 example: 12345
+>               fecha_creacion:
+>                 type: string
+>                 format: date-time
+>                 example: 2024-08-29T14:00:00Z
+>               tipo_evento:
+>                 type: string
+>                 example: Fallo de Motor
+>               mensaje_alerta:
+>                 type: string
+>                 example: "Se ha detectado un posible fallo en el motor."
+>               fecha_procesado:
+>                 type: string
+>                 format: date-time
+>                 example: 2024-08-29T14:05:00Z
+>               emails_destinatarios:
+>                 type: array
+>                 items:
+>                   type: string
+>                   format: email
+>                 example: ["operador1@example.com", "operador2@example.com"]
+>               estado:
+>                 type: string
+>                 example: "enviada"
+>               detalle_estado:
+>                 type: string
+>                 example: "Alerta enviada exitosamente."
+>     responses:
+>       '201':
+>         description: Alerta creada exitosamente.
+>       '400':
+>         description: Datos de entrada inválidos.
+>       '500':
+>         description: Error interno del servidor.
+>
+>   put:
+>     summary: Actualizar una alerta existente
+>     description: Actualiza los detalles de una alerta existente en el sistema.
+>     requestBody:
+>       required: true
+>       content:
+>         application/json:
+>           schema:
+>             type: object
+>             properties:
+>               prediccion_id:
+>                 type: string
+>                 example: 12345
+>               fecha_creacion:
+>                 type: string
+>                 format: date-time
+>                 example: 2024-08-29T14:00:00Z
+>               tipo_evento:
+>                 type: string
+>                 example: Fallo de Motor
+>               mensaje_alerta:
+>                 type: string
+>                 example: "Se ha detectado un posible fallo en el motor."
+>               fecha_procesado:
+>                 type: string
+>                 format: date-time
+>                 example: 2024-08-29T14:05:00Z
+>               emails_destinatarios:
+>                 type: array
+>                 items:
+>                   type: string
+>                   format: email
+>                 example: ["operador1@example.com", "operador2@example.com"]
+>               estado:
+>                 type: string
+>                 example: "enviada"
+>               detalle_estado:
+>                 type: string
+>                 example: "Alerta enviada exitosamente."
+>     responses:
+>       '200':
+>         description: Alerta actualizada exitosamente.
+>       '400':
+>         description: Datos de entrada inválidos.
+>       '404':
+>         description: Alerta no encontrada.
+>       '500':
+>         description: Error interno del servidor.
+> ```
+>
+> ### Validaciones de Datos
+>
+> - **emails_operadores** y **emails_destinatarios**: Se validará que cada elemento de la lista sea un correo electrónico válido.
+>
+> ### Ejemplos de Solicitudes y Respuestas
+>
+> #### **Ejemplo de Solicitud para Crear un `EQUIPO`**
+>
+> ```json
+> {
+>   "nombre": "Compresor A",
+>   "tipo": "Compresor",
+>   "ubicacion": "Planta Norte",
+>   "fecha_instalacion": "2023-08-01",
+>   "emails_operadores": ["operador1@example.com", "operador2@example.com"]
+> }
+> ```
+>
+> #### **Ejemplo de Solicitud para Crear una `ALERTA`**
+>
+> ```json
+> {
+>   "prediccion_id": "12345",
+>   "fecha_creacion": "2024-08-29T14:00:00Z",
+>   "tipo_evento": "Fallo de Motor",
+>   "mensaje_alerta": "Se ha detectado un posible fallo en el motor.",
+>   "fecha_procesado": "2024-08-29T14:05:00Z",
+>   "emails_destinatarios": ["operador1@example.com", "operador2@example.com"],
+>   "estado": "enviada",
+>   "detalle_estado": "Alerta enviada exitosamente."
+> }
+> ```
+>
+> Si todo está correcto, procederé a aplicar estos cambios en la especificación de la API.
+> // End of Selection
+
+**Prompt 6:**
+se requiere ajustar la API para que se tomen las siguientes acciones:
+1. EQUIPOS:  crear/actualizar/listar
+2. ALERTAS: crear/listar.
+
+> Entendido, aquí está la especificación de la API ajustada para reflejar las acciones requeridas:
+>
+> ### Especificación de la API Ajustada
+>
+> #### **EQUIPOS: Crear/Actualizar/Listar**
+>
+> ```yaml
+> openapi: 3.0.0
+> info:
+>   title: API Sistema Predictivo de Mantenimiento de Equipos
+>   version: 1.0.0
+>   description: API para gestionar equipos, mediciones, predicciones y alertas del sistema predictivo de mantenimiento de equipos.
+>
+> paths:
+>   /equipos:
+>     get:
+>       summary: Obtener todos los equipos
+>       description: Retorna una lista de todos los equipos con sus detalles.
+>       parameters:
+>         - in: query
+>           name: page
+>           schema:
+>             type: integer
+>           description: Página de los resultados a obtener.
+>         - in: query
+>           name: size
+>           schema:
+>             type: integer
+>           description: Cantidad de resultados por página.
+>         - in: query
+>           name: sort
+>           schema:
+>             type: string
+>           description: Criterio de ordenamiento (e.g., nombre, tipo).
+>       responses:
+>         '200':
+>           description: Lista de equipos obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Crear un nuevo equipo
+>       description: Registra un nuevo equipo en el sistema.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 nombre:
+>                   type: string
+>                   example: Compresor A
+>                 tipo:
+>                   type: string
+>                   example: Compresor
+>                 ubicacion:
+>                   type: string
+>                   example: Planta Norte
+>                 fecha_instalacion:
+>                   type: string
+>                   format: date
+>                   example: 2023-08-01
+>                 emails_operadores:
+>                   type: array
+>                   items:
+>                     type: string
+>                     format: email
+>                   example: ["operador1@example.com", "operador2@example.com"]
+>       responses:
+>         '201':
+>           description: Equipo creado exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+>
+>   /equipos/{equipo_id}:
+>     put:
+>       summary: Actualizar un equipo existente
+>       description: Actualiza los detalles de un equipo existente en el sistema.
+>       parameters:
+>         - in: path
+>           name: equipo_id
+>           required: true
+>           schema:
+>             type: string
+>           description: ID del equipo a actualizar.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 nombre:
+>                   type: string
+>                   example: Compresor A
+>                 tipo:
+>                   type: string
+>                   example: Compresor
+>                 ubicacion:
+>                   type: string
+>                   example: Planta Norte
+>                 fecha_instalacion:
+>                   type: string
+>                   format: date
+>                   example: 2023-08-01
+>                 emails_operadores:
+>                   type: array
+>                   items:
+>                     type: string
+>                     format: email
+>                   example: ["operador1@example.com", "operador2@example.com"]
+>       responses:
+>         '200':
+>           description: Equipo actualizado exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '404':
+>           description: Equipo no encontrado.
+>         '500':
+>           description: Error interno del servidor.
+> ```
+>
+> #### **ALERTAS: Crear/Listar**
+>
+> ```yaml
+>   /alertas:
+>     get:
+>       summary: Obtener todas las alertas
+>       description: Retorna una lista de todas las alertas con sus detalles.
+>       parameters:
+>         - in: query
+>           name: page
+>           schema:
+>             type: integer
+>           description: Página de los resultados a obtener.
+>         - in: query
+>           name: size
+>           schema:
+>             type: integer
+>           description: Cantidad de resultados por página.
+>         - in: query
+>           name: sort
+>           schema:
+>             type: string
+>           description: Criterio de ordenamiento (e.g., fecha_creacion, tipo_evento).
+>       responses:
+>         '200':
+>           description: Lista de alertas obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Crear una nueva alerta
+>       description: Registra una nueva alerta en el sistema.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 prediccion_id:
+>                   type: string
+>                   example: 12345
+>                 fecha_creacion:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:00:00Z
+>                 tipo_evento:
+>                   type: string
+>                   example: Fallo de Motor
+>                 mensaje_alerta:
+>                   type: string
+>                   example: "Se ha detectado un posible fallo en el motor."
+>                 fecha_procesado:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:05:00Z
+>                 emails_destinatarios:
+>                   type: array
+>                   items:
+>                     type: string
+>                     format: email
+>                   example: ["operador1@example.com", "operador2@example.com"]
+>                 estado:
+>                   type: string
+>                   example: "enviada"
+>                 detalle_estado:
+>                   type: string
+>                   example: "Alerta enviada exitosamente."
+>       responses:
+>         '201':
+>           description: Alerta creada exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+> ```
+>
+> #### **MEDICIONES: Crear/Listar**
+>
+> ```yaml
+>   /mediciones:
+>     get:
+>       summary: Obtener mediciones de los equipos
+>       description: Devuelve una lista de mediciones para los equipos registrados, con soporte para paginación y filtros.
+>       parameters:
+>         - in: query
+>           name: equipo_id
+>           schema:
+>             type: string
+>           description: ID del equipo para filtrar mediciones.
+>         - in: query
+>           name: fecha_inicio
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de inicio del rango de consulta.
+>         - in: query
+>           name: fecha_fin
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de fin del rango de consulta.
+>       responses:
+>         '200':
+>           description: Lista de mediciones obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Registrar una nueva medición
+>       description: Añade una nueva medición de los sensores para un equipo específico.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 equipo_id:
+>                   type: string
+>                   example: 12345
+>                 fecha:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:00:00Z
+>                 frecuencia:
+>                   type: number
+>                   format: float
+>                   example: 50.0
+>                 corriente:
+>                   type: number
+>                   format: float
+>                   example: 10.0
+>                 presion_in:
+>                   type: number
+>                   format: float
+>                   example: 2.5
+>                 presion_out:
+>                   type: number
+>                   format: float
+>                   example: 3.0
+>                 temperatura_in:
+>                   type: number
+>                   format: float
+>                   example: 60.0
+>                 temperatura_out:
+>                   type: number
+>                   format: float
+>                   example: 65.0
+>                 vibracion_x:
+>                   type: number
+>                   format: float
+>                   example: 0.5
+>       responses:
+>         '201':
+>           description: Medición registrada exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+> ```
+>
+> #### **PREDICCIONES: Crear/Listar**
+>
+> ```yaml
+>   /predicciones:
+>     get:
+>       summary: Obtener predicciones
+>       description: Retorna una lista de predicciones generadas por el sistema, filtradas por equipo o rango de fechas.
+>       parameters:
+>         - in: query
+>           name: equipo_id
+>           schema:
+>             type: string
+>           description: ID del equipo para filtrar predicciones.
+>         - in: query
+>           name: fecha_inicio
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de inicio del rango de consulta.
+>         - in: query
+>           name: fecha_fin
+>           schema:
+>             type: string
+>             format: date
+>           description: Fecha de fin del rango de consulta.
+>       responses:
+>         '200':
+>           description: Lista de predicciones obtenida exitosamente.
+>         '500':
+>           description: Error interno del servidor.
+>
+>     post:
+>       summary: Crear una nueva predicción
+>       description: Añade una nueva predicción basada en las mediciones recientes de un equipo.
+>       requestBody:
+>         required: true
+>         content:
+>           application/json:
+>             schema:
+>               type: object
+>               properties:
+>                 equipo_id:
+>                   type: string
+>                   example: 12345
+>                 fecha:
+>                   type: string
+>                   format: date-time
+>                   example: 2024-08-29T14:00:00Z
+>                 tipo_evento_predictivo:
+>                   type: string
+>                   example: Fallo de Motor
+>                 probabilidad:
+>                   type: number
+>                   format: float
+>                   example: 0.85
+>                 tipo_evento_real:
+>                   type: string
+>                   example: Operación Normal
+>                 frecuencia:
+>                   type: number
+>                   format: float
+>                   example: 50.0
+>                 corriente:
+>                   type: number
+>                   format: float
+>                   example: 10.0
+>                 presion_in:
+>                   type: number
+>                   format: float
+>                   example: 2.5
+>                 presion_out:
+>                   type: number
+>                   format: float
+>                   example: 3.0
+>                 temperatura_in:
+>                   type: number
+>                   format: float
+>                   example: 60.0
+>                 temperatura_out:
+>                   type: number
+>                   format: float
+>                   example: 65.0
+>                 vibracion_x:
+>                   type: number
+>                   format: float
+>                   example: 0.5
+>       responses:
+>         '201':
+>           description: Predicción creada exitosamente.
+>         '400':
+>           description: Datos de entrada inválidos.
+>         '500':
+>           description: Error interno del servidor.
+> ```
+>
+> ### Validaciones de Datos
+>
+> - **emails_operadores** y **emails_destinatarios**: Se validará que cada elemento de la lista sea un correo electrónico válido.
+>
+> ### Ejemplos de Solicitudes y Respuestas
+>
+> #### **Ejemplo de Solicitud para Crear un `EQUIPO`**
+>
+> ```json
+> {
+>   "nombre": "Compresor A",
+>   "tipo": "Compresor",
+>   "ubicacion": "Planta Norte",
+>   "fecha_instalacion": "2023-08-01",
+>   "emails_operadores": ["operador1@example.com", "operador2@example.com"]
+> }
+> ```
+>
+> #### **Ejemplo de Solicitud para Crear una `ALERTA`**
+>
+> ```json
+> {
+>   "prediccion_id": "12345",
+>   "fecha_creacion": "2024-08-29T14:00:00Z",
+>   "tipo_evento": "Fallo de Motor",
+>   "mensaje_alerta": "Se ha detectado un posible fallo en el motor.",
+>   "fecha_procesado": "2024-08-29T14:05:00Z",
+>   "emails_destinatarios": ["operador1@example.com", "operador2@example.com"],
+>   "estado": "enviada",
+>   "detalle_estado": "Alerta enviada exitosamente."
+> }
+> ```
+>
+> Si todo está correcto, procederé a aplicar estos cambios en la especificación de la API.
+
+**Prompt 15:**
+ajusta la descripción de los endpoints de acuerdo a la descripción de la API definida en el documento.
+Genera solamente la descripción de los endpoints de la API.
+
+> 1. **/equipos**:
+>    - **GET**: Lista todos los equipos, con soporte para paginación y ordenamiento.
+>    - **POST**: Permite registrar un nuevo equipo con sus detalles básicos.
+>    - **PUT**: Actualiza los detalles de un equipo existente.
+>
+> 2. **/alertas**:
+>    - **GET**: Lista todas las alertas, con soporte para paginación y ordenamiento.
+>    - **POST**: Permite registrar una nueva alerta con sus detalles básicos.
+>
+> 3. **/mediciones**:
+>    - **GET**: Obtiene las mediciones de los sensores de los equipos, con posibilidad de filtrar por rango de fechas y por equipo.
+>    - **POST**: Registra una nueva medición de los sensores para un equipo específico.
+>
+> 4. **/predicciones**:
+>    - **GET**: Lista las predicciones generadas, permitiendo filtrar por equipo o rango de fechas.
+>    - **POST**: Crea una nueva predicción basada en las mediciones recientes de un equipo.
+> // End of Selection
+
+
+
+---
 ### 5. Historias de Usuario
 
 **Prompt 1:**
