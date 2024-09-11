@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: API Sistema Predictivo de Mantenimiento de Equipos
+  version: 1.0.0
+paths:
+  /measurements:
+    post:
+      summary: Registrar una nueva medición
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Measurement'
+      responses:
+        '201':
+          description: Medición registrada exitosamente.
+components:
+  schemas:
+    Measurement:
+      type: object
+      properties:
+        equipmentId:
+          type: string
+        registrationDate:
+          type: string
+          format: date-time
+        frequency:
+          type: number
+        current:
+          type: number
+        internalPressure:
+          type: number
+        externalPressure:
+          type: number
+        internalTemperature:
+          type: number
+        externalTemperature:
+          type: number
+        vibrationX:
+          type: number

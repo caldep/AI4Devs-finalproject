@@ -1,0 +1,15 @@
+amazon:
+  dynamodb:
+    endpoint: http://localhost:8000
+    region: us-west-2
+    access-key: DUMMYIDEXAMPLE
+    secret-key: DUMMYEXAMPLEKEY
+
+spring:
+  data:
+    dynamodb:
+      entity2ddl:
+        auto: create-only
+        gsiProjectionType: ALL
+        readCapacity: 10
+        writeCapacity: 1
