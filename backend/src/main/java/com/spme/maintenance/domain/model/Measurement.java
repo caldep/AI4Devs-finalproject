@@ -1,16 +1,10 @@
 package com.spme.maintenance.domain.model;
 
-
-
 import java.time.LocalDateTime;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import org.springframework.data.annotation.Id;
 import lombok.Data;
-
 
 @Data
 @DynamoDBTable(tableName = "Measurement")
@@ -22,6 +16,7 @@ public class Measurement {
     @DynamoDBAttribute
     private String equipmentId;
 
+    @DynamoDBTypeConverted(converter = LocalDateTimeConverter.class)
     @DynamoDBAttribute
     private LocalDateTime registrationDate;
 
@@ -46,5 +41,16 @@ public class Measurement {
     @DynamoDBAttribute
     private double vibrationX;
 
-   
+    // Converter para LocalDateTime
+    public static class LocalDateTimeConverter implements DynamoDBTypeConverter<String, LocalDateTime> {
+        @Override
+        public String convert(LocalDateTime time) {
+            return time.toString();
+        }
+
+        @Override
+        public LocalDateTime unconvert(String s) {
+            return LocalDateTime.parse(s);
+        }
+    }
 }
