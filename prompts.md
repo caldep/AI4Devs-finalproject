@@ -4116,6 +4116,65 @@ Aplica los ajustes necesarios para que MeasumrementRepository use DynamoDB
 dame un ejemplo para probar si todo está funcionando correctamente, ejemplo, cargar un registro en la entidad Measurement y persistirlo en la BD
 
 **Prompt 13:**
+perfecto, como experto desarrollador Frontend en ReactJS vamos a enfocarnos en analizar e implementar la Historia 3 del proyecto. Toma en cuenta la arquitectura hexagonal definida en el proyecto y la irientación a DDD y TDD.
+
+Antes de comenzar, hazme las preguntas que necesites. No generes el código aún.
+
+> Entendido. Antes de comenzar con la implementación de la Historia 3 del proyecto, que se enfoca en la visualización en el panel de control, tengo algunas preguntas para asegurarme de que estamos alineados con los requisitos y la arquitectura del proyecto:
+
+> 1. ¿Hay algún diseño o mockup específico para el panel de control que debamos seguir?
+
+> 2. ¿Cuáles son los tipos de gráficos o visualizaciones específicas que se requieren para mostrar los datos de los sensores y las predicciones?
+
+> 3. ¿Se ha definido alguna biblioteca de componentes UI específica para React que debamos utilizar (por ejemplo, Material-UI, Ant Design, etc.)?
+
+> 4. ¿Cómo se manejará el estado global de la aplicación? ¿Se utilizará Redux, Context API de React, o alguna otra solución?
+
+> 5. ¿Hay requisitos específicos de rendimiento para la actualización en tiempo real de los datos en el panel de control?
+
+> 6. ¿Cómo se manejarán los errores y las situaciones de carga de datos en la interfaz de usuario?
+
+> 7. ¿Se requiere alguna funcionalidad de filtrado o búsqueda en el panel de control?
+
+> 8. ¿Hay algún requisito de accesibilidad o internacionalización que debamos tener en cuenta?
+
+> 9. ¿Cómo se integrará la autenticación y autorización en el frontend, si es necesario?
+
+> 10. ¿Se han definido los endpoints específicos de la API que el frontend consumirá para obtener los datos de sensores, predicciones y alertas?
+
+> Por favor, proporcione la información que tenga disponible para estas preguntas. Esto nos ayudará a diseñar e implementar la solución frontend de manera más precisa y alineada con los requisitos del proyecto.
+
+**Prompt 14:**
+1. Si hay, revisa el archivo adjunto. La idea es tener una gráfica por cada una de las siete variables apilada verticalmente, donde los datos se muestran en función al tiempo.
+2. los datos de las señales o variables se muestran lineales, las predicciones se muestran con una gráfica de área para ilustrar la probabilidad del evento preductivo.
+3. No se ha definido ninguna, selecciona la más adecuada para las gráficas que se requieren.
+4. Define la opción más adecuada para este caso de uso.
+5. Los datos  serán cargados cada siete minutos.
+6. Se notificaran por cuadros de dialogo.
+7. Si, se requiere filtrar por Equipo y por rango de fechas.
+8. Tomar en cuenta la internacionalización.
+9. Por ahora, no se requiere  autenticación.
+10. Si, están definidos en la documentación de la API. 
+
+**Prompt 15:**
+Si, continúa con la implementación. Incluye las rutas donde se deben crear cada archivo.
+
+**Prompt 16:**
+Completa la implementación:
+1. Configurar las rutas en tu aplicación React (probablemente usando React Router).
+2. Implementar los mensajes de internacionalización.
+3. Estilizar los componentes (puedes usar CSS modules, styled-components, o tu solución preferida).
+4. Configurar el entorno de desarrollo y producción, incluyendo las variables de entorno para la URL de la API.
+
+Para cada archivo que generes, indica la ruta física donde debe ubicarse
+
+**Prompt 17:**
+Deme las instrucciones para poder ejecutar la implementación que hiciste del frontend en ReactJS
+
+**Prompt 18:**
+
+
+
 
 
 [Volver índice](#top)
