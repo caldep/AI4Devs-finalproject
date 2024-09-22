@@ -9,7 +9,7 @@ const SensorData: React.FC = () => {
   useEffect(() => {
     const loadSensorData = async () => {
       try {
-        const equipmentId = 'EQUIPO1';
+        const equipmentId = 'Equipo1';
         const startDate = '2020-01-01T00:00:00';
         const endDate = '2024-12-31T23:59:59';
         const data = await fetchSensorData(equipmentId, startDate, endDate);

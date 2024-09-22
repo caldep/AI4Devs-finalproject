@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { AppContext } from '../context/AppContext';
-//import EquipmentSelector from './EquipmentSelector';
-//import DateRangePicker from './DateRangePicker';
-import SensorChart from './SensorChart';
-//import PredictionChart from './PredictionChart';
-//import AlertDialog from './AlertDialog';
 import { fetchSensorData } from '../services/api';
-//import { translatedMessages } from '../i18n/messages';
+import EquipmentSelector from './EquipmentSelector';
+import SensorChart from './SensorChart';
 
 const DashboardContainer = styled.div`
   padding: 20px;
@@ -26,14 +22,19 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!state.selectedEquipment) return;
+
       try {
         setLoading(true);
-        const equipmentId = 'EQUIPO1';
-        const startDate = '2020-01-01T00:00:00';
-        const endDate = '2025-01-01T00:00:00';
-        const rawData = await fetchSensorData(equipmentId, startDate, endDate);
+        const startDate = state.dateRange.start;
+        const endDate = state.dateRange.end;
+        const currentDate = new Date().toISOString();
+        //const startDate = '2020-01-01T00:00:00';
+        //const endDate = '2024-12-31T23:59:59';
+        const validStartDate = startDate ? startDate.slice(0, 19) : '2020-01-01T00:00:00';
+        const validEndDate = endDate ? endDate.slice(0, 19) : '2030-01-01T00:00:00';
+        const rawData = await fetchSensorData(state.selectedEquipment, validStartDate, validEndDate);
         
-        // Asumiendo que rawData es un array de objetos con todas las mediciones
         const formattedData = rawData.map((item: any) => ({
           timestamp: item.registrationDate,
           frequency: item.frequency,
@@ -54,13 +55,15 @@ const Dashboard: React.FC = () => {
     };
 
     fetchData();
-  }, [intl]);
+  }, [state.selectedEquipment, state.dateRange, intl]);
 
   if (loading) return <div>{intl.formatMessage({ id: 'app.loading' })}</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <DashboardContainer>
+      <h1>{intl.formatMessage({ id: 'dashboard.title' })}</h1>
+      <EquipmentSelector />
       {Object.keys(sensorData[0] || {}).filter(key => key !== 'timestamp').map((sensorType) => (
         <SensorChart key={sensorType} data={sensorData} sensorType={sensorType} />
       ))}

@@ -3,7 +3,7 @@ import React, { createContext, useReducer, Dispatch } from 'react';
 interface State {
   selectedEquipment: string;
   dateRange: { start: string; end: string };
-  equipmentList: { id: string; name: string }[];
+  equipmentList: { equipmentId: string; name: string }[];
   sensorData: any[]; // Tipo más específico según la estructura de tus datos
   predictionData: any[]; // Tipo más específico según la estructura de tus datos
   alert: { message: string } | null;
@@ -18,11 +18,11 @@ type Action =
   | { type: 'SET_ALERT'; payload: { message: string } }
   | { type: 'CLEAR_ALERT' }
   | { type: 'SET_LOCALE'; payload: string }
-  | { type: 'SET_EQUIPMENT_LIST'; payload: { id: string; name: string }[] };
+  | { type: 'SET_EQUIPMENT_LIST'; payload: { equipmentId: string; name: string }[] };
 
 const initialState: State = {
   selectedEquipment: '',
-  dateRange: { start: '2024-01-01', end: '2024-12-31' },
+  dateRange: { start: '2010-01-01T00:00:00', end: '2024-12-31T23:59:59' },
   equipmentList: [],
   sensorData: [],
   predictionData: [],

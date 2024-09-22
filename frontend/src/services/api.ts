@@ -15,18 +15,26 @@ export const fetchSensorData = async (equipmentId: string, startDate: string, en
 };
 
 export const fetchPredictionData = async (equipmentId: string, startDate: string, endDate: string) => {
-  const response = await axios.get(`${API_BASE_URL}/prediction-data`, {
+  const response = await axios.get(`${API_BASE_URL}prediction-data`, {
     params: { equipmentId, startDate, endDate }
   });
   return response.data;
 };
 
 export const fetchEquipmentList = async () => {
-  const response = await axios.get(`${API_BASE_URL}/equipment`);
+  const response = await axios.get(`${API_BASE_URL}equipment`);
   return response.data;
 };
 
 export const fetchAlerts = async () => {
-  const response = await axios.get(`${API_BASE_URL}/alerts`);
+  const response = await axios.get(`${API_BASE_URL}alerts`);
   return response.data;
+};
+
+export const fetchEquipments = async () => {
+  const response = await fetch(`${API_BASE_URL}equipments`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch equipments');
+  }
+  return response.json();
 };
