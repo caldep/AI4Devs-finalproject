@@ -1,5 +1,8 @@
 package com.spme.maintenance.application.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,10 @@ public class MeasurementService {
 
     public void saveMeasurement(Measurement measurement) {
         measurementRepository.save(measurement);
+    }
+
+    public List<Measurement> getSensorData(String equipmentId, LocalDateTime startDate, LocalDateTime endDate) {
+        return measurementRepository.findByEquipmentIdAndRegistrationDateBetween(equipmentId, startDate, endDate);
     }
 
 }

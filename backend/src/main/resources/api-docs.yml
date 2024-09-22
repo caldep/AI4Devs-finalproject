@@ -15,6 +15,35 @@ paths:
       responses:
         '201':
           description: Medición registrada exitosamente.
+    get:
+      summary: Obtener datos de sensores
+      parameters:
+        - in: query
+          name: equipmentId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: startDate
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: endDate
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Datos de sensores obtenidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Measurement'
 components:
   schemas:
     Measurement:
