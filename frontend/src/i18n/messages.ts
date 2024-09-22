@@ -1,34 +1,20 @@
-import { defineMessages } from 'react-intl';
-
-const messages = defineMessages({
-  loading: {
-    id: 'app.loading',
-    defaultMessage: 'Cargando...',
-  },
-  error: {
-    id: 'app.error',
-    defaultMessage: 'Error al cargar los datos',
-  },
-  equipmentSelector: {
-    id: 'app.equipmentSelector',
-    defaultMessage: 'Seleccionar Equipo',
-  },
-  dateRangeStart: {
-    id: 'app.dateRangeStart',
-    defaultMessage: 'Fecha de inicio',
-  },
-  dateRangeEnd: {
-    id: 'app.dateRangeEnd',
-    defaultMessage: 'Fecha de fin',
-  },
-});
-
-export const translatedMessages = {
-  'app.loading': messages.loading.defaultMessage,
-  'app.error': messages.error.defaultMessage,
-  'app.equipmentSelector': messages.equipmentSelector.defaultMessage,
-  'app.dateRangeStart': messages.dateRangeStart.defaultMessage,
-  'app.dateRangeEnd': messages.dateRangeEnd.defaultMessage,
+const messages = {
+  'es': {
+    'app.loading': 'Cargando...',
+    'app.error': 'Ha ocurrido un error',
+    'sensor.frequency': 'Frecuencia',
+    'sensor.current': 'Corriente',
+    'sensor.pressure_in': 'Presión Interna',
+    'sensor.pressure_out': 'Presión Externa',
+    'sensor.temperature_in': 'Temperatura Interna',
+    'sensor.temperature_out': 'Temperatura Externa',
+    'sensor.vibration_x': 'Vibración X',
+    'prediction.title': 'Predicción de Fallos',
+    'equipment.select': 'Seleccionar Equipo',
+    'date.start': 'Fecha Inicio',
+    'date.end': 'Fecha Fin',
+    'alert.title': 'Alertas',
+  }
 };
 
 export default messages;

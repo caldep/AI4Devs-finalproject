@@ -22,7 +22,7 @@ type Action =
 
 const initialState: State = {
   selectedEquipment: '',
-  dateRange: { start: '', end: '' },
+  dateRange: { start: '2024-01-01', end: '2024-12-31' },
   equipmentList: [],
   sensorData: [],
   predictionData: [],
@@ -36,7 +36,13 @@ const reducer = (state: State, action: Action): State => {
     case 'SET_SELECTED_EQUIPMENT':
       return { ...state, selectedEquipment: action.payload };
     case 'SET_DATE_RANGE':
-      return { ...state, dateRange: action.payload };
+      return { 
+        ...state, 
+        dateRange: { 
+          ...state.dateRange,
+          ...action.payload
+        }
+      };
     case 'SET_DATA':
       return { ...state, sensorData: action.payload.sensorData, predictionData: action.payload.predictionData };
     case 'SET_ALERT':

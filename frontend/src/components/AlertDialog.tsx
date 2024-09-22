@@ -1,26 +1,32 @@
-import React, { useContext } from 'react';
-import { FormattedMessage } from 'react-intl';
+import React, { useState, useEffect, useContext } from 'react';
+import { Modal } from 'antd';
+import { useIntl } from 'react-intl';
 import { AppContext } from '../context/AppContext';
 
 const AlertDialog: React.FC = () => {
-  const { state, dispatch } = useContext(AppContext);
+  const [isVisible, setIsVisible] = useState(false);
+  const { state } = useContext(AppContext);
+  const intl = useIntl();
 
-  if (!state.alert) return null;
+  useEffect(() => {
+    if (state.alert) {
+      setIsVisible(true);
+    }
+  }, [state.alert]);
 
-  const handleClose = () => {
-    dispatch({ type: 'CLEAR_ALERT' });
+  const handleOk = () => {
+    setIsVisible(false);
   };
 
   return (
-    <div className="alert-dialog">
-      <h2>
-        <FormattedMessage id="alert.title" defaultMessage="Alerta" />
-      </h2>
-      <p>{state.alert.message}</p>
-      <button onClick={handleClose}>
-        <FormattedMessage id="alert.close" defaultMessage="Cerrar" />
-      </button>
-    </div>
+    <Modal
+      title={intl.formatMessage({ id: 'alert.title' })}
+      visible={isVisible}
+      onOk={handleOk}
+      onCancel={handleOk}
+    >
+      <p>{state.alert?.message}</p>
+    </Modal>
   );
 };
 

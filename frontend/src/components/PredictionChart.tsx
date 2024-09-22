@@ -1,36 +1,37 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { FormattedMessage } from 'react-intl';
+import styled from 'styled-components';
+import { useIntl } from 'react-intl';
 
-type EventType = string;
+const ChartContainer = styled.div`
+  height: 300px;
+  width: 100%;
+  margin-bottom: 20px;
+`;
 
 interface PredictionChartProps {
   data: {
-    timestamp: number;
+    timestamp: string;
     probability: number;
-    event: EventType;
   }[];
 }
 
 const PredictionChart: React.FC<PredictionChartProps> = ({ data }) => {
+  const intl = useIntl();
+
   return (
-    <div style={{ width: '100%', height: 200, marginBottom: 20 }}>
-      <h3>
-        <FormattedMessage id="prediction.title" defaultMessage="Predicción de Eventos" />
-      </h3>
-      <ResponsiveContainer>
+    <ChartContainer>
+      <h3>{intl.formatMessage({ id: 'prediction.title' })}</h3>
+      <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()} />
+          <XAxis dataKey="timestamp" />
           <YAxis />
-          <Tooltip
-            labelFormatter={(label) => new Date(label).toLocaleString()}
-            formatter={(value, name) => [`${value}%`, <FormattedMessage id={`prediction.${String(name)}`} defaultMessage={String(name)} />]}
-          />
+          <Tooltip />
           <Area type="monotone" dataKey="probability" stroke="#82ca9d" fill="#82ca9d" />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 };
 

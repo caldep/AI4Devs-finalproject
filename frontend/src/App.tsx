@@ -1,21 +1,15 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { ThemeProvider } from 'styled-components';
 import AppRoutes from './routes/AppRoutes';
-import GlobalStyles from './styles/GlobalStyles';
-import { translatedMessages } from './i18n/messages';
-
-const theme = {
-  // Aquí puedes definir tu tema
-};
+import { AppProvider } from './context/AppContext';
+import messages from './i18n/messages';
 
 const App: React.FC = () => {
   return (
-    <IntlProvider messages={translatedMessages} locale="es">
-      <ThemeProvider theme={theme}>
-        <GlobalStyles />
+    <IntlProvider messages={messages.es} locale="es" defaultLocale="es">
+      <AppProvider>
         <AppRoutes />
-      </ThemeProvider>
+      </AppProvider>
     </IntlProvider>
   );
 };
