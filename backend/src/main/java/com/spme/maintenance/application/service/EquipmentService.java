@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.ArrayList;
+
 
 @Service
 public class EquipmentService {
@@ -32,6 +35,49 @@ public class EquipmentService {
         return equipments.stream()
                 .map(this::createEquipment)
                 .collect(Collectors.toList());
+    }
+
+    public List<Equipment> getAllEquipments(String filterType, String filterLocation, int page, int size, String sortBy) {
+        try {
+            List<Equipment> equipments = new ArrayList<>();
+    equipmentRepository.findAll().forEach(equipments::add);
+    
+    if (filterType != null && !filterType.isEmpty()) {
+        equipments = equipments.stream()
+            .filter(e -> e.getType().equalsIgnoreCase(filterType))
+            .collect(Collectors.toList());
+    }
+    
+    if (filterLocation != null && !filterLocation.isEmpty()) {
+        equipments = equipments.stream()
+            .filter(e -> e.getLocation().equalsIgnoreCase(filterLocation))
+            .collect(Collectors.toList());
+    }
+    
+    equipments.sort(Comparator.comparing(e -> {
+        switch (sortBy) {
+            case "name":
+                return e.getName();
+            case "type":
+                return e.getType();
+            case "location":
+                return e.getLocation();
+            default:
+                return e.getName();
+        }
+    }));
+    
+    int start = page * size;
+    int end = Math.min((page + 1) * size, equipments.size());
+    return equipments.subList(start, end);
+        
+            
+    
+        } catch (Exception e) {
+            // Log detallado del error
+            e.printStackTrace();
+            throw new RuntimeException("Error al obtener equipos: " + e.getMessage(), e);
+        }
     }
 
     // Implementar otros métodos CRUD aquí

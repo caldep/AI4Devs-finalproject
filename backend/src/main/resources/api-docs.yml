@@ -44,11 +44,83 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Measurement'
+  /equipments:
+    post:
+      summary: Crear un nuevo equipo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Equipment'
+      responses:
+        '201':
+          description: Equipo creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+    get:
+      summary: Obtener todos los equipos
+      parameters:
+        - in: query
+          name: type
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: location
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de equipos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  equipments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Equipment'
+                  totalCount:
+                    type: integer
+                  filters:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      location:
+                        type: string
+  /equipments/batch:
+    post:
+      summary: Crear múltiples equipos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Equipment'
+      responses:
+        '201':
+          description: Equipos creados exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 components:
   schemas:
     Measurement:
       type: object
       properties:
+        id:
+          type: string
         equipmentId:
           type: string
         registrationDate:
@@ -68,3 +140,23 @@ components:
           type: number
         vibrationX:
           type: number
+    Equipment:
+      type: object
+      properties:
+        id:
+          type: string
+        equipmentId:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        location:
+          type: string
+        installationDate:
+          type: string
+          format: date
+        operatorEmails:
+          type: array
+          items:
+            type: string

@@ -21,32 +21,40 @@ public class MeasurementIntegrationTest {
 
   @Test
   public void testSaveMeasurement() {
+    double randomFrequency = 10 + Math.random()*40;
+    double randomCurrent = 10 + Math.random()*40;
+    double randomInternalPressure = 10 + Math.random()*40;
+    double randomExternalPressure = 10 + Math.random()*40;
+    double randomInternalTemperature = 10 + Math.random()*60;
+    double randomExternalTemperature = 10 + Math.random()*70;
+    double randomVibrationX = 10 + Math.random()*40;
+    // Crear un nuevo objeto Measurement
       Measurement measurement = new Measurement();
       measurement.setId(UUID.randomUUID().toString()); // Generar un ID único
-      measurement.setEquipmentId("EQUIPO1");
+      measurement.setEquipmentId("Equipo1");
       LocalDateTime now = LocalDateTime.now();
       measurement.setRegistrationDate(now);
-      measurement.setFrequency(50.0);
-      measurement.setCurrent(10.0);
-      measurement.setInternalPressure(2.5);
-      measurement.setExternalPressure(3.0);
-      measurement.setInternalTemperature(60.0);
-      measurement.setExternalTemperature(65.0);
-      measurement.setVibrationX(0.5);
+      measurement.setFrequency(randomFrequency);
+      measurement.setCurrent(randomCurrent);
+      measurement.setInternalPressure(randomInternalPressure);
+      measurement.setExternalPressure(randomExternalPressure);
+      measurement.setInternalTemperature(randomInternalTemperature);
+      measurement.setExternalTemperature(randomExternalTemperature);
+      measurement.setVibrationX(randomVibrationX);
 
       Measurement savedMeasurement = measurementRepository.save(measurement);
 
       assertNotNull(savedMeasurement);
       assertNotNull(savedMeasurement.getId());
-      assertEquals("EQUIPO1", savedMeasurement.getEquipmentId());
+      assertEquals("Equipo1", savedMeasurement.getEquipmentId());
       assertEquals(now, savedMeasurement.getRegistrationDate());
-      assertEquals(50.0, savedMeasurement.getFrequency(), 0.001);
-      assertEquals(10.0, savedMeasurement.getCurrent(), 0.001);
-      assertEquals(2.5, savedMeasurement.getInternalPressure(), 0.001);
-      assertEquals(3.0, savedMeasurement.getExternalPressure(), 0.001);
-      assertEquals(60.0, savedMeasurement.getInternalTemperature(), 0.001);
-      assertEquals(65.0, savedMeasurement.getExternalTemperature(), 0.001);
-      assertEquals(0.5, savedMeasurement.getVibrationX(), 0.001);
+      assertEquals(randomFrequency, savedMeasurement.getFrequency(), 0.001);
+      assertEquals(randomCurrent, savedMeasurement.getCurrent(), 0.001);
+      assertEquals(randomInternalPressure, savedMeasurement.getInternalPressure(), 0.001);
+      assertEquals(randomExternalPressure, savedMeasurement.getExternalPressure(), 0.001);
+      assertEquals(randomInternalTemperature, savedMeasurement.getInternalTemperature(), 0.001);
+      assertEquals(randomExternalTemperature, savedMeasurement.getExternalTemperature(), 0.001);
+      assertEquals(randomVibrationX, savedMeasurement.getVibrationX(), 0.001);
 
       // Verificar que se puede recuperar de la base de datos
       Optional<Measurement> retrievedMeasurement = measurementRepository.findById(savedMeasurement.getId());
