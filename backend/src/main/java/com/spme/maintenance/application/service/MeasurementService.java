@@ -1,6 +1,9 @@
 package com.spme.maintenance.application.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,9 @@ public class MeasurementService {
     }
 
     public List<Measurement> getSensorData(String equipmentId, LocalDateTime startDate, LocalDateTime endDate) {
-        return measurementRepository.findByEquipmentIdAndRegistrationDateBetween(equipmentId, startDate, endDate);
+        List<Measurement> measurements = new ArrayList<>(measurementRepository.findByEquipmentIdAndRegistrationDateBetween(equipmentId, startDate, endDate));
+        measurements.sort(Comparator.comparing(Measurement::getRegistrationDate));
+        return measurements;
     }
 
 }
