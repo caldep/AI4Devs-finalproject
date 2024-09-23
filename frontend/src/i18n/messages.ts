@@ -20,6 +20,13 @@ const messages = {
     'date.lastMonth': 'Mes Anterior',
     'date.thisYear': 'Este Año',
     'dashboard.update': 'Actualizar',
+    'sensor.frequency.current': 'Freq ACTUAL',
+    'sensor.current.current': 'Corriente ACTUAL',
+    'sensor.internalPressure.current': 'Pres Int ACTUAL',
+    'sensor.externalPressure.current': 'Pres Ext ACTUAL',
+    'sensor.internalTemperature.current': 'Temp Int ACTUAL',
+    'sensor.externalTemperature.current': 'Temp Ext ACTUAL',
+    'sensor.vibration.current': 'Vibración ACTUAL',
   }
 };
 

@@ -8,6 +8,18 @@ import EquipmentSelector from './EquipmentSelector';
 import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
 
+type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
+
+const sensorTypes: SensorType[] = [
+  'frequency',
+  'current',
+  'internalTemperature',
+  'externalTemperature',
+  'internalPressure',
+  'externalPressure',
+  'vibration',
+];
+
 const DashboardContainer = styled.div`
   height: 100vh;
   display: flex;
@@ -41,16 +53,6 @@ const ChartsContainer = styled.div`
   gap: 5px;
   overflow: hidden;
 `;
-
-const sensorTypes = [
-  'frequency',
-  'current',
-  'internalTemperature',
-  'externalTemperature',
-  'internalPressure',
-  'externalPressure',
-  'vibration',
-];
 
 const Dashboard: React.FC = () => {
   const { state, dispatch } = useContext(AppContext);
