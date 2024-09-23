@@ -16,6 +16,10 @@ const messages = {
     'alert.title': 'Alertas',
     'dashboard.title': 'Panel de Control',
     'equipment.loadError': 'Error al cargar los equipos',
+    'date.thisMonth': 'Este Mes',
+    'date.lastMonth': 'Mes Anterior',
+    'date.thisYear': 'Este Año',
+    'dashboard.update': 'Actualizar',
   }
 };
 

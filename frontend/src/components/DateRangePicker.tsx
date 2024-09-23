@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { DatePicker } from 'antd';
+import { DatePicker, Space, Button } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
 import { useIntl } from 'react-intl';
 import dayjs from 'dayjs';
@@ -20,19 +20,39 @@ const DateRangePicker: React.FC = () => {
     }
   };
 
-  // Verificar si state.dateRange existe antes de acceder a sus propiedades
-  const startDate = state.dateRange?.start ? dayjs(state.dateRange.start) : null;
-  const endDate = state.dateRange?.end ? dayjs(state.dateRange.end) : null;
+  const setPresetRange = (start: dayjs.Dayjs, end: dayjs.Dayjs) => {
+    dispatch({
+      type: 'SET_DATE_RANGE',
+      payload: { start: start.toISOString(), end: end.toISOString() },
+    });
+  };
+
+  const startDate = state.dateRange?.start ? dayjs(state.dateRange.start) : dayjs('2024-01-01T00:00:00');
+  const endDate = state.dateRange?.end ? dayjs(state.dateRange.end) : dayjs('2024-12-31T23:59:59');
 
   return (
-    <RangePicker
-      onChange={handleChange}
-      value={[startDate, endDate]}
-      placeholder={[
-        intl.formatMessage({ id: 'date.start' }),
-        intl.formatMessage({ id: 'date.end' }),
-      ]}
-    />
+    <Space direction="vertical" size={12}>
+      <RangePicker
+        onChange={handleChange}
+        value={[startDate, endDate]}
+        placeholder={[
+          intl.formatMessage({ id: 'date.start' }),
+          intl.formatMessage({ id: 'date.end' }),
+        ]}
+        style={{ minWidth: '300px' }}
+      />
+      <Space>
+        <Button onClick={() => setPresetRange(dayjs().startOf('month'), dayjs().endOf('month'))}>
+          {intl.formatMessage({ id: 'date.thisMonth' })}
+        </Button>
+        <Button onClick={() => setPresetRange(dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month'))}>
+          {intl.formatMessage({ id: 'date.lastMonth' })}
+        </Button>
+        <Button onClick={() => setPresetRange(dayjs().startOf('year'), dayjs().endOf('year'))}>
+          {intl.formatMessage({ id: 'date.thisYear' })}
+        </Button>
+      </Space>
+    </Space>
   );
 };
 
