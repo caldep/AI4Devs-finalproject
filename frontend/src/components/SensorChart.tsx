@@ -19,7 +19,7 @@ type SensorType = keyof typeof sensorRanges;
 
 const ChartContainer = styled.div<ChartContainerProps>`
   width: 100%;
-  height: ${props => props.showXAxis ? '15%' : '13%'};
+  height: ${props => props.showXAxis ? '14%' : '12%'};
   display: flex;
   align-items: center;
 `;
@@ -102,7 +102,7 @@ const sensorRanges = {
 };
 
 const ChartTitle = styled.h3`
-  font-size: 16px;
+  font-size: 12px;
   margin-bottom: 10px;
 `;
 
