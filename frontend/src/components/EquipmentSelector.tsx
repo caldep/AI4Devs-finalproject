@@ -18,7 +18,7 @@ const EquipmentSelector: React.FC<{ size?: 'small' | 'middle' | 'large', style?:
         const data = await fetchEquipments();
         dispatch({ type: 'SET_EQUIPMENT_LIST', payload: data.equipments });
       } catch (error) {
-        message.error(intl.formatMessage({ id: 'equipment.loadError' }));
+        message.error(intl.formatMessage({ id: 'equipment.loadError' })+error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ const EquipmentSelector: React.FC<{ size?: 'small' | 'middle' | 'large', style?:
       size={size}
       placeholder={intl.formatMessage({ id: 'equipment.select' })}
       onChange={handleChange}
-      value={state.selectedEquipment}
+      value={state.selectedEquipment || undefined}
       loading={loading}
     >
       {state.equipmentList.map((equipment) => (

@@ -117,6 +117,11 @@ const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType, showXAxis }
     return '#333'; // gris oscuro
   };
 
+  const formatXAxis = (tickItem: string) => {
+    const date = new Date(tickItem);
+    return date.toISOString().split('T')[0];
+  };
+
   return (
     <ChartContainer showXAxis={showXAxis}>
       <ChartWrapper>
@@ -124,7 +129,7 @@ const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType, showXAxis }
         <ResponsiveContainer width="100%" height="95%">
           <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: showXAxis ? 20 : 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            {showXAxis && <XAxis dataKey="timestamp" />}
+            {showXAxis && <XAxis dataKey="timestamp" tickFormatter={formatXAxis} />}
             <YAxis />
             <Tooltip />
             <Line

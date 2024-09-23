@@ -36,7 +36,7 @@ const Header = styled.div`
 
 const Title = styled.h1`
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
 `;
 
 const Controls = styled.div`
