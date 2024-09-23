@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import styled from 'styled-components';
-import { Button, Space } from 'antd';
+import { Button, Row, Col } from 'antd';
 import { AppContext } from '../context/AppContext';
 import { fetchSensorData } from '../services/api';
 import EquipmentSelector from './EquipmentSelector';
@@ -9,17 +9,48 @@ import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
 
 const DashboardContainer = styled.div`
-  padding: 20px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  padding: 10px;
 `;
 
-const FilterContainer = styled.div`
+const Header = styled.div`
   display: flex;
-  gap: 20px;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 `;
+
+const Title = styled.h1`
+  margin: 0;
+  font-size: 18px;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+`;
+
+const ChartsContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+`;
+
+const sensorTypes = [
+  'frequency',
+  'current',
+  'internalTemperature',
+  'externalTemperature',
+  'internalPressure',
+  'externalPressure',
+  'vibration',
+];
 
 const Dashboard: React.FC = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -67,17 +98,26 @@ const Dashboard: React.FC = () => {
 
   return (
     <DashboardContainer>
-      <h1>{intl.formatMessage({ id: 'dashboard.title' })}</h1>
-      <FilterContainer>
-        <EquipmentSelector />
-        <DateRangePicker />
-        <Button onClick={fetchData} type="primary">
-          {intl.formatMessage({ id: 'dashboard.update' })}
-        </Button>
-      </FilterContainer>
-      {Object.keys(sensorData[0] || {}).filter(key => key !== 'timestamp').map((sensorType) => (
-        <SensorChart key={sensorType} data={sensorData} sensorType={sensorType} />
-      ))}
+      <Header>
+        <Title>{intl.formatMessage({ id: 'dashboard.title' })}</Title>
+        <Controls>
+          <EquipmentSelector size="small" style={{ width: '150px' }} />
+          <DateRangePicker size="small" style={{ width: '200px' }} />
+          <Button onClick={fetchData} type="primary" size="small">
+            {intl.formatMessage({ id: 'dashboard.update' })}
+          </Button>
+        </Controls>
+      </Header>
+      <ChartsContainer>
+        {sensorTypes.map((sensorType, index) => (
+          <SensorChart
+            key={sensorType}
+            data={sensorData}
+            sensorType={sensorType}
+            showXAxis={index === sensorTypes.length - 1}
+          />
+        ))}
+      </ChartsContainer>
     </DashboardContainer>
   );
 };

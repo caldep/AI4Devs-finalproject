@@ -7,7 +7,7 @@ import { AppContext } from '../context/AppContext';
 
 const { RangePicker } = DatePicker;
 
-const DateRangePicker: React.FC = () => {
+const DateRangePicker: React.FC<{ size?: 'small' | 'middle' | 'large', style?: React.CSSProperties }> = ({ size = 'middle', style }) => {
   const { state, dispatch } = useContext(AppContext);
   const intl = useIntl();
 
@@ -39,7 +39,8 @@ const DateRangePicker: React.FC = () => {
           intl.formatMessage({ id: 'date.start' }),
           intl.formatMessage({ id: 'date.end' }),
         ]}
-        style={{ minWidth: '300px' }}
+        style={style}
+        size={size}
       />
       <Space>
         <Button onClick={() => setPresetRange(dayjs().startOf('month'), dayjs().endOf('month'))}>

@@ -6,7 +6,7 @@ import { fetchEquipments } from '../services/api'; // Asumimos que existe esta f
 
 const { Option } = Select;
 
-const EquipmentSelector: React.FC = () => {
+const EquipmentSelector: React.FC<{ size?: 'small' | 'middle' | 'large', style?: React.CSSProperties }> = ({ size = 'middle', style }) => {
   const { state, dispatch } = useContext(AppContext);
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,8 @@ const EquipmentSelector: React.FC = () => {
 
   return (
     <Select
-      style={{ width: 200 }}
+      style={style}
+      size={size}
       placeholder={intl.formatMessage({ id: 'equipment.select' })}
       onChange={handleChange}
       value={state.selectedEquipment}

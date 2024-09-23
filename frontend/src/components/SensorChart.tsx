@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   LineChart,
   Line,
@@ -6,26 +6,23 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
-  Brush,
 } from 'recharts';
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
 
-const ChartContainer = styled.div`
-  height: 400px;
+interface ChartContainerProps {
+  showXAxis: boolean;
+}
+
+const ChartContainer = styled.div<ChartContainerProps>`
   width: 100%;
-  margin-bottom: 30px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: ${props => props.showXAxis ? '15%' : '13%'};
 `;
 
 const ChartTitle = styled.h3`
-  font-size: 18px;
-  margin-bottom: 15px;
+  font-size: 12px;
+  margin: 0;
   color: #333;
 `;
 
@@ -43,6 +40,7 @@ interface SensorData {
 interface SensorChartProps {
   data: SensorData[];
   sensorType: string;
+  showXAxis: boolean;
 }
 
 const sensorColors = {
@@ -55,28 +53,24 @@ const sensorColors = {
   vibration: '#ff8042',
 };
 
-const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType }) => {
+const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType, showXAxis }) => {
   const intl = useIntl();
-  const [sensorData, setSensorData] = useState<SensorData[]>([]);
 
   return (
-    <ChartContainer>
+    <ChartContainer showXAxis={showXAxis}>
       <ChartTitle>{intl.formatMessage({ id: `sensor.${sensorType}` })}</ChartTitle>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+      <ResponsiveContainer width="100%" height="95%">
+        <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: showXAxis ? 20 : 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" />
+          {showXAxis && <XAxis dataKey="timestamp" />}
           <YAxis />
           <Tooltip />
-          <Legend />
           <Line
             type="monotone"
             dataKey={sensorType}
             stroke={sensorColors[sensorType as keyof typeof sensorColors]}
             dot={false}
-            activeDot={{ r: 8 }}
           />
-          <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
     </ChartContainer>
