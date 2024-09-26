@@ -11,6 +11,7 @@ import {
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
 
+
 interface ChartContainerProps {
   showXAxis: boolean;
 }
@@ -62,6 +63,27 @@ const CurrentValue = styled.div<{ color: string, isOutOfRange: boolean }>`
 const RangeValue = styled.div`
   font-size: 12px;
   color: #666;
+`;
+
+const Legend = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 5px;
+  font-size: 10px;
+`;
+
+const LegendItem = styled.div<{ color: string }>`
+  display: flex;
+  align-items: center;
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    background-color: ${props => props.color};
+  }
 `;
 
 interface SensorData {
@@ -151,7 +173,7 @@ const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType, showXAxis }
             sensorRanges[sensorType].min,
             sensorRanges[sensorType].max
           )}
-          isOutOfRange={currentValue < sensorRanges[sensorType].min || currentValue > sensorRanges[sensorType].max}
+          isOutOfRange={isOutOfRange}
         >
           {currentValue.toFixed(2)}
         </CurrentValue>

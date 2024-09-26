@@ -7,6 +7,8 @@ import { fetchSensorData } from '../services/api';
 import EquipmentSelector from './EquipmentSelector';
 import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
+import Legend from './Legend';
+
 
 type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
@@ -108,6 +110,7 @@ const Dashboard: React.FC = () => {
           <Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
           </Button>
+          <Legend />
         </Controls>
       </Header>
       <ChartsContainer>

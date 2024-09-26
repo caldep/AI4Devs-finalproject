@@ -27,6 +27,7 @@ const messages = {
     'sensor.internalTemperature.current': 'Temp Int ACTUAL',
     'sensor.externalTemperature.current': 'Temp Ext ACTUAL',
     'sensor.vibration.current': 'Vibración ACTUAL',
+    'legend.title': 'Estado del valor actual',
   }
 };
 
