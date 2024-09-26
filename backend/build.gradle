@@ -30,7 +30,17 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4'
     
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework:spring-context:5.3.23' // Ajusta la versión según tus necesidades
+    implementation 'org.springframework:spring-context:5.3.23' 
+
+    
+    implementation 'org.jpmml:pmml-sklearn:1.8.4'
+    implementation 'org.jpmml:pmml-evaluator:1.6.5'
+    implementation 'org.jpmml:pmml-evaluator-extension:1.5.16'
+    implementation 'org.jpmml:pmml-model:1.6.5'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.0'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.activation:jakarta.activation:2.0.1'
 }
 
 test {
