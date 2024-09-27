@@ -13,3 +13,7 @@ spring:
         gsiProjectionType: ALL
         readCapacity: 10
         writeCapacity: 1
+
+prediction:
+  model:
+    path: /home/clizcano/Documentos/GitHub/AI4Devs/AI4Devs-finalproject/backend/src/main/resources/models/predictor.pmml

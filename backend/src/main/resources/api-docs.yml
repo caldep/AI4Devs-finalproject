@@ -15,6 +15,8 @@ paths:
       responses:
         '201':
           description: Medición registrada exitosamente.
+        '400':
+          description: Datos de medición inválidos.
     get:
       summary: Obtener datos de sensores
       parameters:
@@ -44,6 +46,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Measurement'
+        '404':
+          description: No se encontraron mediciones para el equipo especificado.
   /equipments:
     post:
       summary: Crear un nuevo equipo
@@ -60,6 +64,8 @@ paths:
             application/json:
               schema:
                 type: string
+        '400':
+          description: Datos de equipo inválidos.
     get:
       summary: Obtener todos los equipos
       parameters:
@@ -114,6 +120,100 @@ paths:
                 type: array
                 items:
                   type: string
+        '400':
+          description: Datos de equipos inválidos.
+  /equipments/{id}:
+    get:
+      summary: Obtener un equipo por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Equipo obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Equipment'
+        '404':
+          description: Equipo no encontrado.
+    put:
+      summary: Actualizar un equipo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Equipment'
+      responses:
+        '200':
+          description: Equipo actualizado exitosamente
+        '400':
+          description: Datos de equipo inválidos.
+        '404':
+          description: Equipo no encontrado.
+    delete:
+      summary: Eliminar un equipo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Equipo eliminado exitosamente
+        '404':
+          description: Equipo no encontrado.
+  /predictions:
+    post:
+      summary: Realizar una predicción para un equipo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictionRequest'
+      responses:
+        '200':
+          description: Predicción realizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionResponse'
+        '400':
+          description: Datos de predicción inválidos
+        '404':
+          description: Equipo no encontrado
+  /predictions/{equipmentId}:
+    get:
+      summary: Obtener predicciones para un equipo específico
+      parameters:
+        - in: path
+          name: equipmentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Predicciones obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionResponse'
+        '404':
+          description: Equipo no encontrado o sin predicciones
 components:
   schemas:
     Measurement:
@@ -160,3 +260,28 @@ components:
           type: array
           items:
             type: string
+    PredictionRequest:
+      type: object
+      properties:
+        equipmentId:
+          type: string
+        measurementId:
+          type: string
+    PredictionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        equipmentId:
+          type: string
+        measurementId:
+          type: string
+        predictionDate:
+          type: string
+          format: date-time
+        failureProbability:
+          type: number
+        estimatedTimeToFailure:
+          type: number
+        recommendedAction:
+          type: string
