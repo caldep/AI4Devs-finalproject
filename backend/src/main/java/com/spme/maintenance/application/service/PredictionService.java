@@ -9,6 +9,8 @@ import com.spme.maintenance.application.dto.TypeSensorDTO;
 import com.spme.maintenance.domain.model.Prediction;
 import com.spme.maintenance.domain.model.Measurement;
 import com.spme.maintenance.domain.repository.PredictionRepository;
+import com.spme.maintenance.application.service.MeasurementObserver;
+import com.spme.maintenance.application.dto.MeasurementWithPredictionDTO;
 
 //import org.glassfish.jaxb.runtime.v2.schemagen.xmlschema.List;
 import org.jpmml.evaluator.Evaluator;
@@ -166,9 +168,9 @@ public class PredictionService implements MeasurementObserver {
     }
 
     @Override
-    public void onMeasurementSaved(Measurement measurement) {
+    public Prediction onMeasurementSaved(Measurement measurement) {
         Map<String, Object> measurementMap = convertMeasurementToMap(measurement);
-        execPrediction(measurementMap);
+        return execPrediction(measurementMap);
     }
 
     private Map<String, Object> convertMeasurementToMap(Measurement measurement) {

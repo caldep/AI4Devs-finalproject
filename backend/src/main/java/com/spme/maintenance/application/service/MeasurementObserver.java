@@ -1,7 +1,8 @@
 package com.spme.maintenance.application.service;
 
 import com.spme.maintenance.domain.model.Measurement;
+import com.spme.maintenance.domain.model.Prediction;
 
 public interface MeasurementObserver {
-    void onMeasurementSaved(Measurement measurement);
+    Prediction onMeasurementSaved(Measurement measurement);
 }
