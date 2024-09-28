@@ -9,7 +9,7 @@ import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
 import Legend from './Legend';
 import { Modal } from 'antd';
-
+import { message } from 'antd';
 
 type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
@@ -118,21 +118,23 @@ const Dashboard: React.FC = () => {
       const response = await postMeasurement(measurement);
       
       if (response.predictiveEventType > 0) {
-        Modal.info({
-          title: intl.formatMessage({ id: 'alert.eventTitle' }),
+        message.info({
           content: intl.formatMessage(
             { id: 'alert.eventMessage' },
             { 
               eventType: response.predictiveEventType,
-              probability: (response.probability * 100).toFixed(2)
+              probability: ((1-response.probability) * 100).toFixed(2)
             }
-          )
+          ),
+          duration: 6, // Duración en segundos
+          className: 'custom-message', // Clase CSS personalizada si se necesita
         });
       }
 
       await fetchData();
     } catch (err) {
       console.error('Error en la simulación:', err);
+      message.error(intl.formatMessage({ id: 'simulation.error' }), 6);
     }
   }, [state.selectedEquipment, intl]);
 
