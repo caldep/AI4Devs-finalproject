@@ -22,7 +22,7 @@ type Action =
 
 const initialState: State = {
   selectedEquipment: '',
-  dateRange: { start: '2010-01-01T00:00:00', end: '2024-12-31T23:59:59' },
+  dateRange: { start: '2024-01-01T00:00:00', end: '2024-12-31T23:59:59' },
   equipmentList: [],
   sensorData: [],
   predictionData: [],

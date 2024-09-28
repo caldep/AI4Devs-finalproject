@@ -160,7 +160,7 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      const interval = setInterval(simulateMeasurement, 10000);
+      const interval = setInterval(simulateMeasurement, 7000);
       setSimulationInterval(interval);
       setIsSimulating(true);
     }
@@ -186,8 +186,8 @@ const Dashboard: React.FC = () => {
       <Header>
         <Title>{intl.formatMessage({ id: 'dashboard.title' })}</Title>
         <Controls>
-          <EquipmentSelector size="small" style={{ width: '150px' }} />
-          <DateRangePicker size="small" style={{ width: '200px' }} />
+          <EquipmentSelector size="small" style={{ width: '150px' }}  />
+          <DateRangePicker size="small" style={{ width: '210px' }} />
           <Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
           </Button>
