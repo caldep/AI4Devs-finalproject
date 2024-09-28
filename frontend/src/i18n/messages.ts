@@ -28,6 +28,10 @@ const messages = {
     'sensor.externalTemperature.current': 'Temp Ext ACTUAL',
     'sensor.vibration.current': 'Vibración ACTUAL',
     'legend.title': 'Estado del valor actual',
+    'dashboard.startSimulation': 'Iniciar simulación',
+    'dashboard.stopSimulation': 'Detener simulación',
+    'alert.eventTitle': 'Alerta de Evento',
+    'alert.eventMessage': 'Se ha detectado un Evento{eventType} con una probabilidad de {probability}%.',
   }
 };
 

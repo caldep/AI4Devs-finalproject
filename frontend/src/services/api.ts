@@ -38,3 +38,13 @@ export const fetchEquipments = async () => {
   }
   return response.json();
 };
+
+export const postMeasurement = async (measurement: any) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}measurements`, measurement);
+    return response.data;
+  } catch (error) {
+    console.error('Error posting measurement:', error);
+    throw error;
+  }
+};

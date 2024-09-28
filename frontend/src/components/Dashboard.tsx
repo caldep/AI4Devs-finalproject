@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { Button, Row, Col } from 'antd';
 import { AppContext } from '../context/AppContext';
-import { fetchSensorData } from '../services/api';
+import { fetchSensorData, postMeasurement } from '../services/api';
 import EquipmentSelector from './EquipmentSelector';
 import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
 import Legend from './Legend';
+import { Modal } from 'antd';
 
 
 type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
@@ -61,6 +62,8 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sensorData, setSensorData] = useState<any[]>([]);
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationInterval, setSimulationInterval] = useState<NodeJS.Timeout | null>(null);
   const intl = useIntl();
 
   const fetchData = async () => {
@@ -93,9 +96,87 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const generateRandomMeasurement = () => {
+    return {
+      equipmentId: state.selectedEquipment,
+      registrationDate: new Date().toISOString(),
+      frequency: 30.0 + Math.random() * 40.0,
+      current: 300.0 + Math.random() * 120.0,
+      internalPressure: 430.0 + Math.random() * 70.0,
+      externalPressure: 3000.0 + Math.random() * 600.0,
+      internalTemperature: 180.0 + Math.random() * 50.0,
+      externalTemperature: 200.0 + Math.random() * 60.0,
+      vibrationX: Math.random() * 200.0
+    };
+  };
+
+  const simulateMeasurement = useCallback(async () => {
+    if (!state.selectedEquipment) return;
+
+    try {
+      const measurement = generateRandomMeasurement();
+      const response = await postMeasurement(measurement);
+      
+      if (response.predictiveEventType > 0) {
+        Modal.info({
+          title: intl.formatMessage({ id: 'alert.eventTitle' }),
+          content: intl.formatMessage(
+            { id: 'alert.eventMessage' },
+            { 
+              eventType: response.predictiveEventType,
+              probability: (response.probability * 100).toFixed(2)
+            }
+          )
+        });
+      }
+
+      await fetchData();
+    } catch (err) {
+      console.error('Error en la simulación:', err);
+    }
+  }, [state.selectedEquipment, intl]);
+
+  const toggleSimulation = () => {
+    if (isSimulating) {
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+      }
+      setIsSimulating(false);
+    } else {
+      if (!state.selectedEquipment) {
+        Modal.error({
+          title: intl.formatMessage({ id: 'error.noEquipment' }),
+          content: intl.formatMessage({ id: 'error.selectEquipment' })
+        });
+        return;
+      }
+
+      const endDate = new Date(state.dateRange.end);
+      if (endDate <= new Date()) {
+        Modal.error({
+          title: intl.formatMessage({ id: 'error.invalidDateRange' }),
+          content: intl.formatMessage({ id: 'error.futureEndDate' })
+        });
+        return;
+      }
+
+      const interval = setInterval(simulateMeasurement, 10000);
+      setSimulationInterval(interval);
+      setIsSimulating(true);
+    }
+  };
+
   useEffect(() => {
     fetchData();
-  }, [state.selectedEquipment]);
+  }, [state.selectedEquipment, state.dateRange]);
+
+  useEffect(() => {
+    return () => {
+      if (simulationInterval) {
+        clearInterval(simulationInterval);
+      }
+    };
+  }, [simulationInterval]);
 
   if (loading) return <div>{intl.formatMessage({ id: 'app.loading' })}</div>;
   if (error) return <div>{error}</div>;
@@ -109,6 +190,9 @@ const Dashboard: React.FC = () => {
           <DateRangePicker size="small" style={{ width: '200px' }} />
           <Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
+          </Button>
+          <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
+            {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
           </Button>
           <Legend />
         </Controls>
