@@ -2,6 +2,21 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+interface MeasurementGraphicsDTO {
+  id: string;
+  equipmentId: string;
+  registrationDate: string;
+  frequency: number;
+  current: number;
+  internalPressure: number;
+  externalPressure: number;
+  internalTemperature: number;
+  externalTemperature: number;
+  vibrationX: number;
+  predictiveEventType: string;
+  probability: number;
+}
+
 export const fetchSensorData = async (equipmentId: string, startDate: string, endDate: string) => {
   try {
     const response = await axios.get(`${API_BASE_URL}measurements`, {
@@ -39,9 +54,9 @@ export const fetchEquipments = async () => {
   return response.json();
 };
 
-export const postMeasurement = async (measurement: any) => {
+export const postMeasurement = async (measurement: any): Promise<MeasurementGraphicsDTO> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}measurements`, measurement);
+    const response = await axios.post<MeasurementGraphicsDTO>(`${API_BASE_URL}measurements`, measurement);
     return response.data;
   } catch (error) {
     console.error('Error posting measurement:', error);

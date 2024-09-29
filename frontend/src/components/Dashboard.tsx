@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
       const measurement = generateRandomMeasurement();
       const response = await postMeasurement(measurement);
       
-      if (response.predictiveEventType >= 0) {
+      if (Number(response.predictiveEventType) >= 0) {
         const newMessage = intl.formatMessage(
           { id: 'alert.eventMessage' },
           { 
@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
             probability: ((1-response.probability) * 100).toFixed(2)
           }
         );
-        setAlertMessage({ message: newMessage, eventType: response.predictiveEventType });
+        setAlertMessage({ message: newMessage, eventType: Number(response.predictiveEventType) });
         setTimeout(() => setAlertMessage(null), 5000);
       }
 
