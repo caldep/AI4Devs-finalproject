@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationInterval, setSimulationInterval] = useState<NodeJS.Timeout | null>(null);
   const intl = useIntl();
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<{ message: string; eventType: number } | null>(null);
 
   const fetchData = async () => {
     if (!state.selectedEquipment) return;
@@ -102,13 +102,13 @@ const Dashboard: React.FC = () => {
     return {
       equipmentId: state.selectedEquipment,
       registrationDate: new Date().toISOString(),
-      frequency: 30.0 + Math.random() * 40.0,
-      current: 300.0 + Math.random() * 120.0,
-      internalPressure: 430.0 + Math.random() * 70.0,
-      externalPressure: 3000.0 + Math.random() * 600.0,
-      internalTemperature: 180.0 + Math.random() * 50.0,
-      externalTemperature: 200.0 + Math.random() * 60.0,
-      vibrationX: Math.random() * 200.0
+      frequency: 40.0 + Math.random() * 20.0,
+      current: 250.0 + Math.random() * 80.0,
+      internalPressure: 500.0 + Math.random() * 300.0,
+      externalPressure: 2000.0 + Math.random() * 1500.0,
+      internalTemperature: 70.0 + Math.random() * 200.0,
+      externalTemperature: 100.0 + Math.random() * 150.0,
+      vibrationX: Math.random()
     };
   };
 
@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
       const measurement = generateRandomMeasurement();
       const response = await postMeasurement(measurement);
       
-      if (response.predictiveEventType > 0) {
+      if (response.predictiveEventType >= 0) {
         const newMessage = intl.formatMessage(
           { id: 'alert.eventMessage' },
           { 
@@ -127,15 +127,15 @@ const Dashboard: React.FC = () => {
             probability: ((1-response.probability) * 100).toFixed(2)
           }
         );
-        setAlertMessage(newMessage);
+        setAlertMessage({ message: newMessage, eventType: response.predictiveEventType });
         setTimeout(() => setAlertMessage(null), 5000);
       }
 
       await fetchData();
     } catch (err) {
       console.error('Error en la simulación:', err);
-      setAlertMessage(intl.formatMessage({ id: 'simulation.error' }));
-      setAlertMessage(null);
+      setAlertMessage({ message: intl.formatMessage({ id: 'simulation.error' }), eventType: 3 });
+      setTimeout(() => setAlertMessage(null), 5000);
     }
   }, [state.selectedEquipment, intl, fetchData]);
 
