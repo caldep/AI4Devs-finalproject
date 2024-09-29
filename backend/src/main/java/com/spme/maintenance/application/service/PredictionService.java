@@ -74,7 +74,7 @@ public class PredictionService implements MeasurementObserver {
         // Crear y guardar la predicción
         Prediction prediction = new Prediction();
         prediction.setEquipmentId(measurements.get("equipmentId").toString());
-        prediction.setRecordDate(LocalDateTime.now());
+        prediction.setRecordDate(LocalDateTime.parse(measurements.get("registrationDate").toString()));
         prediction.setPredictiveEventType(results.get("y").toString());
         prediction.setProbability((Double) results.get("probability(0)") );
         // Establecer los valores de los sensores
