@@ -10,6 +10,7 @@ import SensorChart from './SensorChart';
 import Legend from './Legend';
 import { Modal } from 'antd';
 import { message } from 'antd';
+import AlertMessage from './AlertMessage';
 
 type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
@@ -65,6 +66,7 @@ const Dashboard: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationInterval, setSimulationInterval] = useState<NodeJS.Timeout | null>(null);
   const intl = useIntl();
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   const fetchData = async () => {
     if (!state.selectedEquipment) return;
@@ -118,25 +120,24 @@ const Dashboard: React.FC = () => {
       const response = await postMeasurement(measurement);
       
       if (response.predictiveEventType > 0) {
-        message.info({
-          content: intl.formatMessage(
-            { id: 'alert.eventMessage' },
-            { 
-              eventType: response.predictiveEventType,
-              probability: ((1-response.probability) * 100).toFixed(2)
-            }
-          ),
-          duration: 6, // Duración en segundos
-          className: 'custom-message', // Clase CSS personalizada si se necesita
-        });
+        const newMessage = intl.formatMessage(
+          { id: 'alert.eventMessage' },
+          { 
+            eventType: response.predictiveEventType,
+            probability: ((1-response.probability) * 100).toFixed(2)
+          }
+        );
+        setAlertMessage(newMessage);
+        setTimeout(() => setAlertMessage(null), 5000);
       }
 
       await fetchData();
     } catch (err) {
       console.error('Error en la simulación:', err);
-      message.error(intl.formatMessage({ id: 'simulation.error' }), 6);
+      setAlertMessage(intl.formatMessage({ id: 'simulation.error' }));
+      setTimeout(() => setAlertMessage(null), 5000);
     }
-  }, [state.selectedEquipment, intl]);
+  }, [state.selectedEquipment, intl, fetchData]);
 
   const toggleSimulation = () => {
     if (isSimulating) {
@@ -187,6 +188,7 @@ const Dashboard: React.FC = () => {
     <DashboardContainer>
       <Header>
         <Title>{intl.formatMessage({ id: 'dashboard.title' })}</Title>
+        <AlertMessage message={alertMessage} />
         <Controls>
           <EquipmentSelector size="small" style={{ width: '150px' }} />
           <DateRangePicker size="small" style={{ width: '210px' }} />
@@ -209,7 +211,6 @@ const Dashboard: React.FC = () => {
         ))}
         <Legend />
       </ChartsContainer>
-      
     </DashboardContainer>
   );
 };
