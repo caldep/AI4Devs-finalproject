@@ -188,7 +188,7 @@ const Dashboard: React.FC = () => {
       <Header>
         <Title>{intl.formatMessage({ id: 'dashboard.title' })}</Title>
         <Controls>
-          <EquipmentSelector size="small" style={{ width: '150px' }}  />
+          <EquipmentSelector size="small" style={{ width: '150px' }} />
           <DateRangePicker size="small" style={{ width: '210px' }} />
           <Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
