@@ -135,7 +135,7 @@ const Dashboard: React.FC = () => {
     } catch (err) {
       console.error('Error en la simulación:', err);
       setAlertMessage(intl.formatMessage({ id: 'simulation.error' }));
-      setTimeout(() => setAlertMessage(null), 5000);
+      setAlertMessage(null);
     }
   }, [state.selectedEquipment, intl, fetchData]);
 
@@ -145,28 +145,29 @@ const Dashboard: React.FC = () => {
         clearInterval(simulationInterval);
       }
       setIsSimulating(false);
-    } else {
-      if (!state.selectedEquipment) {
-        Modal.error({
-          title: intl.formatMessage({ id: 'error.noEquipment' }),
-          content: intl.formatMessage({ id: 'error.selectEquipment' })
-        });
-        return;
-      }
-
-      const endDate = new Date(state.dateRange.end);
-      if (endDate <= new Date()) {
-        Modal.error({
-          title: intl.formatMessage({ id: 'error.invalidDateRange' }),
-          content: intl.formatMessage({ id: 'error.futureEndDate' })
-        });
-        return;
-      }
-
-      const interval = setInterval(simulateMeasurement, 7000);
-      setSimulationInterval(interval);
-      setIsSimulating(true);
+      return;
+    } 
+    if (!state.selectedEquipment) {
+      Modal.error({
+        title: intl.formatMessage({ id: 'error.noEquipment' }),
+        content: intl.formatMessage({ id: 'error.selectEquipment' })
+      });
+      return;
     }
+
+    const endDate = new Date(state.dateRange.end);
+    if (endDate <= new Date()) {
+      Modal.error({
+        title: intl.formatMessage({ id: 'error.invalidDateRange' }),
+        content: intl.formatMessage({ id: 'error.futureEndDate' })
+      });
+      return;
+    }
+    simulateMeasurement();
+    const interval = setInterval(simulateMeasurement, 7000);
+    setSimulationInterval(interval);
+    setIsSimulating(true);
+    
   };
 
   useEffect(() => {
