@@ -26,13 +26,14 @@ public class MeasurementIntegrationTest {
 
   @Test
   public void testSaveMeasurement() {
-    double randomFrequency = 30.0 + Math.random()*40.0;
-    double randomCurrent = 300.0 + Math.random()*120.0;
-    double randomInternalPressure = 430.0 + Math.random()*70.0;
-    double randomExternalPressure = 3000.0 + Math.random()*600.0;
-    double randomInternalTemperature = 180.0 + Math.random()*50.0;
-    double randomExternalTemperature = 200.0 + Math.random()*60.0;
-    double randomVibrationX = Math.random()*200.0;
+    double randomFrequency = 40.0 + Math.random()*20.0;
+    double randomCurrent = 250.0 + Math.random()*80.0;
+    double randomInternalPressure = 500.0 + Math.random()*300.0;
+    double randomExternalPressure = 2000.0 + Math.random()*1500.0;
+    double randomInternalTemperature = 70.0 + Math.random()*200.0;
+    double randomExternalTemperature = 100.0 + Math.random()*150.0;
+    double randomVibrationX = Math.random();
+
     // Crear un nuevo objeto Measurement
       Measurement measurement = new Measurement();
       measurement.setId(UUID.randomUUID().toString()); // Generar un ID único
