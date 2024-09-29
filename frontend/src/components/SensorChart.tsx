@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
-
+import { sensorColors, sensorRanges, statusColors } from '../config/sensorConfig';
 
 interface ChartContainerProps {
   showXAxis: boolean;
@@ -103,26 +103,6 @@ interface SensorChartProps {
   showXAxis: boolean;
 }
 
-const sensorColors = {
-  frequency: '#8884d8',
-  current: '#82ca9d',
-  internalTemperature: '#ffc658',
-  externalTemperature: '#ff7300',
-  internalPressure: '#0088fe',
-  externalPressure: '#00c49f',
-  vibration: '#ff8042',
-};
-
-const sensorRanges = {
-  frequency: { min: 10, max: 60 },
-  current: { min: 10, max: 400 },
-  internalPressure: { min: 10, max: 500 },
-  externalPressure: { min: 3000, max: 3400 },
-  internalTemperature: { min: 10, max: 250 },
-  externalTemperature: { min: 10, max: 250 },
-  vibration: { min: 0, max: 1 },
-};
-
 const ChartTitle = styled.h3`
   font-size: 12px;
   margin-bottom: 10px;
@@ -134,9 +114,9 @@ const SensorChart: React.FC<SensorChartProps> = ({ data, sensorType, showXAxis }
   const isOutOfRange = currentValue < sensorRanges[sensorType].min || currentValue > sensorRanges[sensorType].max;
 
   const getValueColor = (value: number, min: number, max: number) => {
-    if (value < min) return 'orange';
-    if (value > max) return 'red';
-    return '#333'; // gris oscuro
+    if (value < min) return statusColors.low;
+    if (value > max) return statusColors.high;
+    return statusColors.normal;
   };
 
   const formatXAxis = (tickItem: string) => {

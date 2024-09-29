@@ -3,32 +3,26 @@ import styled from 'styled-components';
 import { useIntl } from 'react-intl';
 
 const LegendContainer = styled.div`
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
+  position: static;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100px;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  width: 100%;
   background-color: white;
-  z-index: 1000;
 `;
 
 const LegendTitle = styled.div`
   font-size: 12px;
-  margin-bottom: 5px;
-  text-align: center;
-  width: 100%;
+  margin-right: 10px;
 `;
 
 const LegendItemsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-right: 10px;
 `;
 
 const LegendItem = styled.div<{ color: string }>`
@@ -52,9 +46,9 @@ const Legend: React.FC = () => {
     <LegendContainer>
       <LegendTitle>{intl.formatMessage({ id: 'legend.title' })}</LegendTitle>
       <LegendItemsContainer>
-        <LegendItem color="orange">Bajo</LegendItem>
-        <LegendItem color="#333">Normal</LegendItem>
-        <LegendItem color="red">Alto</LegendItem>
+        <LegendItem color="orange">{intl.formatMessage({ id: 'legend.low' })}</LegendItem>
+        <LegendItem color="#333">{intl.formatMessage({ id: 'legend.normal' })}</LegendItem>
+        <LegendItem color="red">{intl.formatMessage({ id: 'legend.high' })}</LegendItem>
       </LegendItemsContainer>
     </LegendContainer>
   );

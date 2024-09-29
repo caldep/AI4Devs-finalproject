@@ -196,7 +196,6 @@ const Dashboard: React.FC = () => {
           <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
             {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
           </Button>
-          <Legend />
         </Controls>
       </Header>
       <ChartsContainer>
@@ -208,7 +207,9 @@ const Dashboard: React.FC = () => {
             showXAxis={index === sensorTypes.length - 1}
           />
         ))}
+        <Legend />
       </ChartsContainer>
+      
     </DashboardContainer>
   );
 };
