@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.spme.maintenance.application.dto.MeasurementWithPredictionDTO;
+import com.spme.maintenance.application.dto.MeasurementGraphicsDTO;
 import com.spme.maintenance.domain.model.Measurement;
 import com.spme.maintenance.domain.model.Prediction;
 import com.spme.maintenance.domain.repository.MeasurementRepository;
@@ -31,16 +31,25 @@ public class MeasurementService {
         observers.add(observer);
     }
 
-    public CompletableFuture<MeasurementWithPredictionDTO> saveMeasurement(Measurement measurement) {
+    public CompletableFuture<MeasurementGraphicsDTO> saveMeasurement(Measurement measurement) {
         Measurement savedMeasurement = measurementRepository.save(measurement);
         
         return CompletableFuture.supplyAsync(() -> {
             Prediction prediction = notifyObserversAndGetPrediction(savedMeasurement);
-            return new MeasurementWithPredictionDTO(
-                savedMeasurement,
-                prediction.getPredictiveEventType(),
-                prediction.getProbability()
-            );
+            if (prediction != null) {
+                return new MeasurementGraphicsDTO(
+                    savedMeasurement,
+                    prediction.getPredictiveEventType(),
+                    prediction.getProbability()
+                );
+            } else {
+                // Manejar el caso en que no se pudo obtener una predicción
+                return new MeasurementGraphicsDTO(
+                    savedMeasurement,
+                    "-1",
+                    1.0
+                );
+            }
         });
     }
 
@@ -50,6 +59,9 @@ public class MeasurementService {
             try {
                 if (observer instanceof PredictionService) {
                     prediction = ((PredictionService) observer).onMeasurementSaved(measurement);
+                    if (prediction != null) {
+                        break;  // Si obtenemos una predicción válida, salimos del bucle
+                    }
                 } else {
                     observer.onMeasurementSaved(measurement);
                 }
@@ -58,6 +70,14 @@ public class MeasurementService {
                     "Error al notificar al observador: " + observer.getClass().getSimpleName(), e);
             }
         }
+        
+        if (prediction == null) {
+            // Si no se pudo obtener una predicción, creamos una predicción por defecto
+            prediction = new Prediction();
+            prediction.setPredictiveEventType("-1");
+            prediction.setProbability(1.0);
+        }
+        
         return prediction;
     }
 

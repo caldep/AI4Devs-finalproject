@@ -18,7 +18,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MeasurementWithPrediction'
+                $ref: '#/components/schemas/MeasurementGraphicsDTO'
         '400':
           description: Datos de medición inválidos.
         '500':
@@ -296,6 +296,35 @@ components:
       properties:
         measurement:
           $ref: '#/components/schemas/Measurement'
+        predictiveEventType:
+          type: string
+        probability:
+          type: number
+          format: double
+    MeasurementGraphicsDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        equipmentId:
+          type: string
+        registrationDate:
+          type: string
+          format: date-time
+        frequency:
+          type: number
+        current:
+          type: number
+        internalPressure:
+          type: number
+        externalPressure:
+          type: number
+        internalTemperature:
+          type: number
+        externalTemperature:
+          type: number
+        vibrationX:
+          type: number
         predictiveEventType:
           type: string
         probability:

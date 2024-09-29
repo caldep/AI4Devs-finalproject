@@ -74,7 +74,9 @@ public class PredictionService implements MeasurementObserver {
         // Crear y guardar la predicción
         Prediction prediction = new Prediction();
         prediction.setEquipmentId(measurements.get("equipmentId").toString());
-        prediction.setRecordDate(LocalDateTime.parse(measurements.get("registrationDate").toString()));
+        LocalDateTime recordDate = (LocalDateTime) measurements.get("registrationDate");
+        System.out.println("recordDate: " + recordDate);
+        prediction.setRecordDate(recordDate);
         prediction.setPredictiveEventType(results.get("y").toString());
         prediction.setProbability((Double) results.get("probability(0)") );
         // Establecer los valores de los sensores
@@ -176,6 +178,7 @@ public class PredictionService implements MeasurementObserver {
     private Map<String, Object> convertMeasurementToMap(Measurement measurement) {
         Map<String, Object> map = new HashMap<>();
         map.put("equipmentId", measurement.getEquipmentId());
+        map.put("registrationDate", measurement.getRegistrationDate());
         map.put("x1", measurement.getFrequency());
         map.put("x2", measurement.getCurrent());
         map.put("x3", measurement.getInternalPressure());

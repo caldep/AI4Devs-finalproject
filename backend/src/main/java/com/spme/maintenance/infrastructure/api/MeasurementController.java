@@ -1,6 +1,6 @@
 package com.spme.maintenance.infrastructure.api;
 
-import com.spme.maintenance.application.dto.MeasurementWithPredictionDTO;
+import com.spme.maintenance.application.dto.MeasurementGraphicsDTO;
 import com.spme.maintenance.application.service.MeasurementService;
 import com.spme.maintenance.domain.model.Measurement;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class MeasurementController {
     }            
 
     @PostMapping
-    public CompletableFuture<ResponseEntity<MeasurementWithPredictionDTO>> saveMeasurement(@RequestBody Measurement measurement) {
+    public CompletableFuture<ResponseEntity<MeasurementGraphicsDTO>> saveMeasurement(@RequestBody Measurement measurement) {
         return measurementService.saveMeasurement(measurement)
             .thenApply(result -> ResponseEntity.ok().body(result))
             .exceptionally(ex -> {
