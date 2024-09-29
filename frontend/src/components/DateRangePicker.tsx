@@ -50,9 +50,11 @@ const DateRangePicker: React.FC<{ size?: 'small' | 'middle' | 'large', style?: R
           {intl.formatMessage({ id: 'date.lastMonth' })}
         </Button>
         
-        <Button onClick={() => setPresetRange(dayjs().startOf('year'), dayjs().endOf('year'))}>
-           {intl.formatMessage({ id: 'date.thisYear' })}
-         </Button>
+        {false && (
+          <Button onClick={() => setPresetRange(dayjs().startOf('year'), dayjs().endOf('year'))}>
+            {intl.formatMessage({ id: 'date.thisYear' })}
+          </Button>
+        )}
         
       </Space>
     </Space>
