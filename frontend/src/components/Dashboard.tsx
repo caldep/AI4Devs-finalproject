@@ -135,7 +135,7 @@ const Dashboard: React.FC = () => {
           }
         );
         setAlertMessage({ message: newMessage, eventType: Number(response.predictiveEventType) });
-        captureScreenshot();
+        setTimeout(() => captureScreenshot(), 2000);
         setTimeout(() => setAlertMessage(null), 5000);
       }
 
