@@ -221,9 +221,11 @@ const Dashboard: React.FC = () => {
           <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
             {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
           </Button>
+          {/*
           <Button onClick={captureScreenshot} size="small">
             {intl.formatMessage({ id: 'dashboard.takeScreenshot' })}
           </Button>
+          */}
         </Controls>
       </Header>
       <ChartsContainer>
