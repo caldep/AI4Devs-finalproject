@@ -75,3 +75,38 @@ export const fetchMeasurementGraphics = async (equipmentId: string, startDate: s
     throw error;
   }
 };
+
+export const sendScreenshotToBackend = async (imageData: string, fileName: string) => {
+  try {
+    // Convertir la cadena base64 a un archivo Blob
+    const byteString = atob(imageData.split(',')[1]);
+    const mimeString = imageData.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], { type: mimeString });
+
+    // Crear un objeto FormData y agregar el archivo
+    const formData = new FormData();
+    formData.append('file', blob, fileName);
+    formData.append('fileName', fileName);
+
+    const response = await axios.post(`${API_BASE_URL}resources/save-screenshot`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error('Error al guardar la captura de pantalla');
+    }
+
+    console.log('Captura de pantalla guardada exitosamente');
+    return response.data;
+  } catch (error) {
+    console.error('Error al guardar la captura de pantalla:', error);
+    throw error;
+  }
+};

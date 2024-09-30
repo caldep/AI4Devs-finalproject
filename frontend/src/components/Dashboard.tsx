@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { Button, Row, Col } from 'antd';
 import { AppContext } from '../context/AppContext';
-import { fetchSensorData, postMeasurement, fetchMeasurementGraphics, MeasurementGraphicsDTO } from '../services/api'; // Ajusta la ruta según sea necesario
+import { fetchSensorData, postMeasurement, fetchMeasurementGraphics, MeasurementGraphicsDTO, sendScreenshotToBackend } from '../services/api'; // Ajusta la ruta según sea necesario
 import EquipmentSelector from './EquipmentSelector';
 import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
@@ -11,6 +11,8 @@ import Legend from './Legend';
 import { Modal } from 'antd';
 import { message } from 'antd';
 import AlertMessage from './AlertMessage';
+import html2canvas from 'html2canvas';
+import { format } from 'date-fns';
 
 type SensorType = 'predictiveEventType' | 'probability' | 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
@@ -132,6 +134,7 @@ const Dashboard: React.FC = () => {
           }
         );
         setAlertMessage({ message: newMessage, eventType: Number(response.predictiveEventType) });
+        captureScreenshot();
         setTimeout(() => setAlertMessage(null), 5000);
       }
 
@@ -174,6 +177,21 @@ const Dashboard: React.FC = () => {
     
   };
 
+  const captureScreenshot = () => {
+    const element = document.body;
+    html2canvas(element).then((canvas) => {
+      const image = canvas.toDataURL("image/png");
+      const timestamp = format(new Date(), 'yyyyMMddHHmmss');
+      const fileName = `${timestamp}-alert.png`;
+
+      sendScreenshotToBackend(image, fileName)
+        .catch((error) => {
+          message.error(intl.formatMessage({ id: 'screenshot.error' }));
+          console.error('Error al guardar la captura de pantalla:', error);
+        });
+    });
+  };
+
   useEffect(() => {
     fetchData();
   }, [state.selectedEquipment, state.dateRange]);
@@ -202,6 +220,9 @@ const Dashboard: React.FC = () => {
           </Button>
           <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
             {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
+          </Button>
+          <Button onClick={captureScreenshot} size="small">
+            {intl.formatMessage({ id: 'dashboard.takeScreenshot' })}
           </Button>
         </Controls>
       </Header>

@@ -40,6 +40,7 @@ const messages = {
     'alert.eventTitle': 'Alerta de Evento',
     'alert.eventMessage': 'Se ha detectado un Evento{eventType} con una probabilidad de {probability}%.',
     'simulation.error': 'Error en la simulación',
+    'dashboard.takeScreenshot': 'Enviar captura de pantalla',
   }
 };
 
