@@ -215,9 +215,9 @@ const Dashboard: React.FC = () => {
         <Controls>
           <EquipmentSelector size="small" style={{ width: '150px' }} />
           <DateRangePicker size="small" style={{ width: '210px' }} />
-          <Button onClick={fetchData} type="primary" size="small">
+          {/*<Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
-          </Button>
+          </Button>*/}
           <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
             {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
           </Button>
