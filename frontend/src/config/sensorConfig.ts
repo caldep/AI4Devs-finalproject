@@ -6,6 +6,8 @@ export const sensorColors = {
   internalPressure: '#0088fe',
   externalPressure: '#00c49f',
   vibration: '#ff8042',
+  predictiveEventType: '#8E44AD', // Púrpura
+  probability: '#F39C12' // Naranja
 };
 
 export const sensorRanges = {
@@ -16,6 +18,8 @@ export const sensorRanges = {
   internalTemperature: { min: 10, max: 250 },
   externalTemperature: { min: 10, max: 250 },
   vibration: { min: 0, max: 1 },
+  predictiveEventType: { min: -1, max: 0 },
+  probability: { min: 90, max: 100 }
 };
 
 export const statusColors = {

@@ -45,7 +45,7 @@ public class MeasurementService {
                 return new MeasurementGraphicsDTO(
                     savedMeasurement,
                     prediction.getPredictiveEventType(),
-                    prediction.getProbability()
+                    (1.0-prediction.getProbability())
                 );
             } else {
                 // Manejar el caso en que no se pudo obtener una predicción
@@ -107,7 +107,7 @@ public class MeasurementService {
                 return new MeasurementGraphicsDTO(
                     m,
                     p != null ? p.getPredictiveEventType() : "-1",
-                    p != null ? p.getProbability() : 1.0
+                    p != null ? (1.0 - p.getProbability()) : 1.0
                 );
             })
             .sorted(Comparator.comparing(MeasurementGraphicsDTO::getRegistrationDate))

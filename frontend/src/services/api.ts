@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-interface MeasurementGraphicsDTO {
+export interface MeasurementGraphicsDTO {
   id: string;
   equipmentId: string;
   registrationDate: string;
@@ -60,6 +60,18 @@ export const postMeasurement = async (measurement: any): Promise<MeasurementGrap
     return response.data;
   } catch (error) {
     console.error('Error posting measurement:', error);
+    throw error;
+  }
+};
+
+export const fetchMeasurementGraphics = async (equipmentId: string, startDate: string, endDate: string): Promise<MeasurementGraphicsDTO[]> => {
+  try {
+    const response = await axios.get<MeasurementGraphicsDTO[]>(`${API_BASE_URL}measurements/graphics`, {
+      params: { equipmentId, startDate, endDate }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching measurement graphics:', error);
     throw error;
   }
 };

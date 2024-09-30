@@ -20,7 +20,7 @@ type SensorType = keyof typeof sensorRanges;
 
 const ChartContainer = styled.div<ChartContainerProps>`
   width: 100%;
-  height: ${props => props.showXAxis ? '14%' : '12%'};
+  height: ${props => props.showXAxis ? '10%' : '10%'};
   display: flex;
   align-items: center;
 `;
@@ -32,7 +32,7 @@ const ChartWrapper = styled.div`
 
 const CurrentValueBox = styled.div<{ color: string }>`
   width: 100px;
-  height: 80%;
+  height: 90%;
   margin-left: 10px;
   display: flex;
   flex-direction: column;
@@ -43,13 +43,13 @@ const CurrentValueBox = styled.div<{ color: string }>`
 `;
 
 const CurrentValueTitle = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: #333;
   margin-bottom: 5px;
 `;
 
 const CurrentValue = styled.div<{ color: string, isOutOfRange: boolean }>`
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   color: ${props => props.color};
   ${props => props.isOutOfRange && `
@@ -88,6 +88,8 @@ const LegendItem = styled.div<{ color: string }>`
 
 interface SensorData {
   timestamp: string;
+  predictiveEventType: number;
+  probability: number;
   frequency: number;
   current: number;
   internalTemperature: number;

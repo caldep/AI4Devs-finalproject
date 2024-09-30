@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { Button, Row, Col } from 'antd';
 import { AppContext } from '../context/AppContext';
-import { fetchSensorData, postMeasurement } from '../services/api';
+import { fetchSensorData, postMeasurement, fetchMeasurementGraphics, MeasurementGraphicsDTO } from '../services/api'; // Ajusta la ruta según sea necesario
 import EquipmentSelector from './EquipmentSelector';
 import DateRangePicker from './DateRangePicker';
 import SensorChart from './SensorChart';
@@ -12,9 +12,11 @@ import { Modal } from 'antd';
 import { message } from 'antd';
 import AlertMessage from './AlertMessage';
 
-type SensorType = 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
+type SensorType = 'predictiveEventType' | 'probability' | 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
 const sensorTypes: SensorType[] = [
+  'predictiveEventType',
+  'probability',
   'frequency',
   'current',
   'internalTemperature',
@@ -77,10 +79,12 @@ const Dashboard: React.FC = () => {
       const endDate = state.dateRange.end;
       const validStartDate = startDate ? startDate.slice(0, 19) : '2024-01-01T00:00:00';
       const validEndDate = endDate ? endDate.slice(0, 19) : '2024-12-31T23:59:59';
-      const rawData = await fetchSensorData(state.selectedEquipment, validStartDate, validEndDate);
+      const rawData = await fetchMeasurementGraphics(state.selectedEquipment, validStartDate, validEndDate);
       
-      const formattedData = rawData.map((item: any) => ({
+      const formattedData = rawData.map((item: MeasurementGraphicsDTO) => ({
         timestamp: item.registrationDate,
+        predictiveEventType: Number(item.predictiveEventType),
+        probability: item.probability * 100, // Convertir a porcentaje
         frequency: item.frequency,
         current: item.current,
         internalTemperature: item.internalTemperature,
@@ -124,7 +128,7 @@ const Dashboard: React.FC = () => {
           { id: 'alert.eventMessage' },
           { 
             eventType: response.predictiveEventType,
-            probability: ((1-response.probability) * 100).toFixed(2)
+            probability: (response.probability * 100).toFixed(2)
           }
         );
         setAlertMessage({ message: newMessage, eventType: Number(response.predictiveEventType) });
