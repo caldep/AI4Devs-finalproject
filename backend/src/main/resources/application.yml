@@ -17,3 +17,7 @@ spring:
 prediction:
   model:
     path: /home/clizcano/Documentos/GitHub/AI4Devs/AI4Devs-finalproject/backend/src/main/resources/models/predictor.pmml
+
+alert:
+  screenshot:
+    path: ${user.dir}/resources/alerts/screenshots/

@@ -100,3 +100,4 @@ backend/gradlew.bat
 backend/gradlew.bat
 backend/gradle/wrapper/gradle-wrapper.properties
 frontend/package-lock.json
+/resources/alerts/screenshots

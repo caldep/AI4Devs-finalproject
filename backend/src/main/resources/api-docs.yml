@@ -288,6 +288,28 @@ paths:
           description: Parámetros de consulta inválidos
         '404':
           description: No se encontraron predicciones para el equipo y rango de fechas especificados
+  /resources/save-screenshot:
+    post:
+      summary: Guardar una captura de pantalla
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                fileName:
+                  type: string
+      responses:
+        '200':
+          description: Captura de pantalla guardada exitosamente
+        '400':
+          description: Datos de captura de pantalla inválidos
+        '500':
+          description: Error interno del servidor al guardar la captura de pantalla
 components:
   schemas:
     Measurement:
