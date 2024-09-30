@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { DatePicker, Space, Button } from 'antd';
+import { DatePicker, Space, Button, Tooltip } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
 import { useIntl } from 'react-intl';
 import dayjs from 'dayjs';
@@ -32,24 +32,29 @@ const DateRangePicker: React.FC<{ size?: 'small' | 'middle' | 'large', style?: R
 
   return (
     <Space direction="vertical" size={12}>
-      <RangePicker
-        onChange={handleChange}
-        value={[startDate, endDate]}
-        placeholder={[
-          intl.formatMessage({ id: 'date.start' }),
-          intl.formatMessage({ id: 'date.end' }),
-        ]}
-        style={style}
-        size={size}
-      />
+      <Tooltip title={intl.formatMessage({ id: 'date.rangeTooltip' })}>
+        <RangePicker
+          onChange={handleChange}
+          value={[startDate, endDate]}
+          placeholder={[
+            intl.formatMessage({ id: 'date.start' }),
+            intl.formatMessage({ id: 'date.end' }),
+          ]}
+          style={style}
+          size={size}
+        />
+      </Tooltip>
       <Space>
-        <Button onClick={() => setPresetRange(dayjs().startOf('month'), dayjs().endOf('month'))}>
-          {intl.formatMessage({ id: 'date.thisMonth' })}
-        </Button>
+        <Tooltip title={intl.formatMessage({ id: 'date.thisMonthTooltip' })}>
+          <Button onClick={() => setPresetRange(dayjs().startOf('month'), dayjs().endOf('month'))}>
+            {intl.formatMessage({ id: 'date.thisMonth' })}
+          </Button>
+        </Tooltip>
+        <Tooltip title={intl.formatMessage({ id: 'date.lastMonthTooltip' })}>
         <Button onClick={() => setPresetRange(dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month'))}>
           {intl.formatMessage({ id: 'date.lastMonth' })}
         </Button>
-        
+        </Tooltip>
         {false && (
           <Button onClick={() => setPresetRange(dayjs().startOf('year'), dayjs().endOf('year'))}>
             {intl.formatMessage({ id: 'date.thisYear' })}

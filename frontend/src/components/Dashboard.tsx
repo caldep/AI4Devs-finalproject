@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import styled from 'styled-components';
-import { Button, Row, Col } from 'antd';
+import { Button, Row, Col, Tooltip } from 'antd';
 import { AppContext } from '../context/AppContext';
 import { fetchSensorData, postMeasurement, fetchMeasurementGraphics, MeasurementGraphicsDTO, sendScreenshotToBackend } from '../services/api'; // Ajusta la ruta según sea necesario
 import EquipmentSelector from './EquipmentSelector';
@@ -13,6 +13,7 @@ import { message } from 'antd';
 import AlertMessage from './AlertMessage';
 import html2canvas from 'html2canvas';
 import { format } from 'date-fns';
+import { Label } from 'recharts';
 
 type SensorType = 'predictiveEventType' | 'probability' | 'frequency' | 'current' | 'internalPressure' | 'externalPressure' | 'internalTemperature' | 'externalTemperature' | 'vibration';
 
@@ -218,9 +219,11 @@ const Dashboard: React.FC = () => {
           {/*<Button onClick={fetchData} type="primary" size="small">
             {intl.formatMessage({ id: 'dashboard.update' })}
           </Button>*/}
-          <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
-            {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
-          </Button>
+          <Tooltip title={intl.formatMessage({ id: 'dashboard.simulationTooltip' })}>
+            <Button onClick={toggleSimulation} type={isSimulating ? "default" : "primary"} size="small">
+              {intl.formatMessage({ id: isSimulating ? 'dashboard.stopSimulation' : 'dashboard.startSimulation' })}
+            </Button>
+          </Tooltip>
           {/*
           <Button onClick={captureScreenshot} size="small">
             {intl.formatMessage({ id: 'dashboard.takeScreenshot' })}

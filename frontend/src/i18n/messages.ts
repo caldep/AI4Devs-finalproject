@@ -16,7 +16,7 @@ const messages = {
     'date.start': 'Fecha Inicio',
     'date.end': 'Fecha Fin',
     'alert.title': 'Alertas',
-    'dashboard.title': 'Panel SPME',
+    'dashboard.title': 'Panel de Monitoreo del Sistema Predictivo de Mantenimiento - SPME',
     'equipment.loadError': 'Error al cargar los equipos',
     'date.thisMonth': 'Este Mes',
     'date.lastMonth': 'Mes Anterior',
@@ -41,6 +41,11 @@ const messages = {
     'alert.eventMessage': 'Se ha detectado un Evento{eventType} con una probabilidad de {probability}%.',
     'simulation.error': 'Error en la simulación',
     'dashboard.takeScreenshot': 'Enviar captura de pantalla',
+    'date.rangeTooltip': 'Seleccione el rango de fecha para consultar datos registrados de los sensores',
+    'date.thisMonthTooltip': 'Permite consultar los datos registrados en el mes actual',
+    'date.lastMonthTooltip': 'Permite consultar los datos registrados en el mes anterior',
+    'equipment.selectTooltip': 'Seleccione el equipo que desea consultar',
+    'dashboard.simulationTooltip': 'Inicia/Detiene la simulación de captura de valores de los sensores. Cada 7 segundos se recarga la data del monitoreo, se evalúa la predicción con su probabilidad y se muestra la alerta del tipo de evento predictivo en pantalla. Por cada alerta se captura la pantalla para ser adjunta a al correo electrónico de notificación a los interesados de los equipos',
   }
 };
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
-import { Select, message } from 'antd';
+import { Select, message, Tooltip } from 'antd';
 import { useIntl } from 'react-intl';
 import { AppContext } from '../context/AppContext';
 import { fetchEquipments } from '../services/api'; // Asumimos que existe esta función
@@ -60,20 +60,22 @@ const EquipmentSelector: React.FC<{ size?: 'small' | 'middle' | 'large', style?:
   };
 
   return (
-    <Select
-      style={style}
-      size={size}
-      placeholder={intl.formatMessage({ id: 'equipment.select' })}
-      onChange={handleChange}
-      value={state.selectedEquipment || undefined}
-      loading={loading}
-    >
-      {state.equipmentList.map((equipment) => (
-        <Option key={equipment.equipmentId} value={equipment.equipmentId}>
-          {equipment.name}
-        </Option>
-      ))}
-    </Select>
+    <Tooltip title={intl.formatMessage({ id: 'equipment.selectTooltip' })}>
+      <Select
+        style={style}
+        size={size}
+        placeholder={intl.formatMessage({ id: 'equipment.select' })}
+        onChange={handleChange}
+        value={state.selectedEquipment || undefined}
+        loading={loading}
+      >
+        {state.equipmentList.map((equipment) => (
+          <Option key={equipment.equipmentId} value={equipment.equipmentId}>
+            {equipment.name}
+          </Option>
+        ))}
+      </Select>
+    </Tooltip>
   );
 };
 
