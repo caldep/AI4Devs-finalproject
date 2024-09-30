@@ -8,9 +8,10 @@ import org.xml.sax.SAXException;
 import com.spme.maintenance.application.dto.TypeSensorDTO;
 import com.spme.maintenance.domain.model.Prediction;
 import com.spme.maintenance.domain.model.Measurement;
+import com.spme.maintenance.domain.repository.DynamoDBPredictionRepository;
 import com.spme.maintenance.domain.repository.PredictionRepository;
-import com.spme.maintenance.application.service.MeasurementObserver;
-import com.spme.maintenance.application.dto.MeasurementWithPredictionDTO;
+
+
 
 //import org.glassfish.jaxb.runtime.v2.schemagen.xmlschema.List;
 import org.jpmml.evaluator.Evaluator;
@@ -21,6 +22,8 @@ import org.jpmml.evaluator.FieldValue;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedHashMap;
@@ -33,13 +36,13 @@ import jakarta.xml.bind.JAXBException;
 
 @Service
 public class PredictionService implements MeasurementObserver {
-    private final PredictionRepository predictionRepository;
+    private final DynamoDBPredictionRepository predictionRepository;
     private final Evaluator evaluator;
     private final Map<String, TypeSensorDTO> sensorTypes;
     private final List<InputField> inputFields;
 
     @Autowired
-    public PredictionService(PredictionRepository predictionRepository, 
+    public PredictionService(DynamoDBPredictionRepository predictionRepository, 
                              @Value("${prediction.model.path}") String modelPath) 
             throws IOException, ParserConfigurationException, SAXException, JAXBException {
         this.predictionRepository = predictionRepository;
@@ -187,6 +190,12 @@ public class PredictionService implements MeasurementObserver {
         map.put("x6", measurement.getExternalTemperature());
         map.put("x7", measurement.getVibrationX());
         return map;
+    }
+
+    public List<Prediction> getPredictions(String equipmentId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Prediction> predictions = new ArrayList<>(predictionRepository.findByEquipmentIdAndRecordDateBetween(equipmentId, startDate, endDate));
+        predictions.sort(Comparator.comparing(Prediction::getRecordDate));
+        return predictions;
     }
 
 }

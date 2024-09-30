@@ -1,7 +1,7 @@
 package com.spme.maintenance.domain.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+
 import org.springframework.lang.NonNull;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -10,6 +10,12 @@ import com.spme.maintenance.domain.model.Prediction;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Map;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import java.util.Comparator;
+import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class DynamoDBPredictionRepository implements PredictionRepository {
@@ -101,5 +107,19 @@ public class DynamoDBPredictionRepository implements PredictionRepository {
     @Override
     public void deleteAll() {
         dynamoDBMapper.batchDelete(findAll());
+    }
+
+    @Override
+    public List<Prediction> findByEquipmentIdAndRecordDateBetween(String equipmentId, LocalDateTime startDate, LocalDateTime endDate) {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+            .withFilterExpression("equipmentId = :equipmentId and recordDate between :startDate and :endDate")
+            .withExpressionAttributeValues(Map.of(
+                ":equipmentId", new AttributeValue(equipmentId),
+                ":startDate", new AttributeValue().withS(startDate.toString()),
+                ":endDate", new AttributeValue().withS(endDate.toString())
+            ));
+        
+        List<Prediction> predictions = dynamoDBMapper.scan(Prediction.class, scanExpression);
+        return predictions;
     }
 }

@@ -220,6 +220,40 @@ paths:
                   $ref: '#/components/schemas/PredictionResponse'
         '404':
           description: Equipo no encontrado o sin predicciones
+  /predictions:
+    get:
+      summary: Obtener predicciones para un equipo en un rango de fechas
+      parameters:
+        - in: query
+          name: equipmentId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: startDate
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: endDate
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Predicciones obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionResponse'
+        '400':
+          description: Parámetros de consulta inválidos
+        '404':
+          description: No se encontraron predicciones para el equipo y rango de fechas especificados
 components:
   schemas:
     Measurement:
@@ -296,35 +330,6 @@ components:
       properties:
         measurement:
           $ref: '#/components/schemas/Measurement'
-        predictiveEventType:
-          type: string
-        probability:
-          type: number
-          format: double
-    MeasurementGraphicsDTO:
-      type: object
-      properties:
-        id:
-          type: string
-        equipmentId:
-          type: string
-        registrationDate:
-          type: string
-          format: date-time
-        frequency:
-          type: number
-        current:
-          type: number
-        internalPressure:
-          type: number
-        externalPressure:
-          type: number
-        internalTemperature:
-          type: number
-        externalTemperature:
-          type: number
-        vibrationX:
-          type: number
         predictiveEventType:
           type: string
         probability:

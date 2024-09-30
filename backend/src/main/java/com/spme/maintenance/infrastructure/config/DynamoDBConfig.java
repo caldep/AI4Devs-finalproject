@@ -9,13 +9,17 @@ import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRep
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.spme.maintenance.domain.repository.PredictionRepository;
+import com.spme.maintenance.domain.repository.DynamoDBPredictionRepository;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.spme.maintenance.domain.repository")
 public class DynamoDBConfig {
 
     @Value("${amazon.dynamodb.endpoint}")
-    private String amazonDynamoDBEndpoint;
+    private String amazonDynamoDBEndpoint; 
 
     @Value("${amazon.dynamodb.region}")
     private String amazonAWSRegion;
@@ -33,4 +37,6 @@ public class DynamoDBConfig {
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey)))
                 .build();
     }
+
+   
 }
