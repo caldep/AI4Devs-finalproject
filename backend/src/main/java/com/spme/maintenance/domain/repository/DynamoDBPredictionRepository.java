@@ -1,7 +1,6 @@
 package com.spme.maintenance.domain.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.NonNull;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -12,11 +11,13 @@ import java.util.Optional;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.HashMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import java.util.Comparator;
 import org.springframework.stereotype.Repository;
+import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 
 
+@EnableScan
 @Repository
 public class DynamoDBPredictionRepository implements PredictionRepository {
     private final DynamoDBMapper dynamoDBMapper;
@@ -111,15 +112,15 @@ public class DynamoDBPredictionRepository implements PredictionRepository {
 
     @Override
     public List<Prediction> findByEquipmentIdAndRecordDateBetween(String equipmentId, LocalDateTime startDate, LocalDateTime endDate) {
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-            .withFilterExpression("equipmentId = :equipmentId and recordDate between :startDate and :endDate")
-            .withExpressionAttributeValues(Map.of(
-                ":equipmentId", new AttributeValue(equipmentId),
-                ":startDate", new AttributeValue().withS(startDate.toString()),
-                ":endDate", new AttributeValue().withS(endDate.toString())
-            ));
-        
-        List<Prediction> predictions = dynamoDBMapper.scan(Prediction.class, scanExpression);
-        return predictions;
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":equipmentId", new AttributeValue().withS(equipmentId));
+        eav.put(":startDate", new AttributeValue().withS(startDate.toString()));
+        eav.put(":endDate", new AttributeValue().withS(endDate.toString()));
+
+        DynamoDBQueryExpression<Prediction> queryExpression = new DynamoDBQueryExpression<Prediction>()
+            .withKeyConditionExpression("equipmentId = :equipmentId and recordDate between :startDate and :endDate")
+            .withExpressionAttributeValues(eav);
+
+        return dynamoDBMapper.query(Prediction.class, queryExpression);
     }
 }

@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/measurements")
@@ -43,6 +43,15 @@ public class MeasurementController {
                 ex.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             });
+    }
+    
+    @GetMapping("/graphics")
+    public ResponseEntity<List<MeasurementGraphicsDTO>> getSensorDataWithPredictions(
+            @RequestParam String equipmentId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        List<MeasurementGraphicsDTO> measurementGraphics = measurementService.getSensorDataWithPredictions(equipmentId, startDate, endDate);
+        return ResponseEntity.ok(measurementGraphics);
     }
     
 
