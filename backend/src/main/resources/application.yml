@@ -1,6 +1,6 @@
 amazon:
   dynamodb:
-    endpoint: http://localhost:8000
+    endpoint: https://30ec-2800-484-4482-5480-5274-b367-897e-12e3.ngrok-free.app
     region: us-west-2
     access-key: DUMMYIDEXAMPLE
     secret-key: DUMMYEXAMPLEKEY
