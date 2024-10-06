@@ -6,7 +6,7 @@ import com.spme.maintenance.domain.model.Measurement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.CompletableFuture;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,14 +35,15 @@ public class MeasurementController {
     }            
 
     @PostMapping
-    public CompletableFuture<ResponseEntity<MeasurementGraphicsDTO>> saveMeasurement(@RequestBody Measurement measurement) {
-        return measurementService.saveMeasurement(measurement)
-            .thenApply(result -> ResponseEntity.ok().body(result))
-            .exceptionally(ex -> {
-                // Registrar el error
-                ex.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-            });
+    public ResponseEntity<MeasurementGraphicsDTO> saveMeasurement(@RequestBody Measurement measurement) {
+        try {
+            MeasurementGraphicsDTO result = measurementService.saveMeasurement(measurement).get();
+            return ResponseEntity.ok().body(result);
+        } catch (Exception ex) {
+            // Registrar el error
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
     
     @GetMapping("/graphics")

@@ -1,7 +1,6 @@
 package com.spme.maintenance.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -9,17 +8,14 @@ import com.spme.maintenance.application.dto.TypeSensorDTO;
 import com.spme.maintenance.domain.model.Prediction;
 import com.spme.maintenance.domain.model.Measurement;
 import com.spme.maintenance.domain.repository.DynamoDBPredictionRepository;
-import com.spme.maintenance.domain.repository.PredictionRepository;
 
+import java.io.InputStream;
 
-
-//import org.glassfish.jaxb.runtime.v2.schemagen.xmlschema.List;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
 import org.jpmml.evaluator.FieldValue;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.ArrayList;
@@ -32,27 +28,34 @@ import java.time.LocalDateTime;
 import javax.xml.parsers.ParserConfigurationException;
 import jakarta.xml.bind.JAXBException;
 
-
-
 @Service
 public class PredictionService implements MeasurementObserver {
     private final DynamoDBPredictionRepository predictionRepository;
+    private final PredictionModelBucketS3 modelBucketS3;
     private final Evaluator evaluator;
     private final Map<String, TypeSensorDTO> sensorTypes;
     private final List<InputField> inputFields;
+    private InputStream modelInputStream;
 
     @Autowired
-    public PredictionService(DynamoDBPredictionRepository predictionRepository, 
-                             @Value("${prediction.model.path}") String modelPath) 
+    public PredictionService(DynamoDBPredictionRepository predictionRepository, PredictionModelBucketS3 modelBucketS3) 
             throws IOException, ParserConfigurationException, SAXException, JAXBException {
         this.predictionRepository = predictionRepository;
+        this.modelBucketS3 = modelBucketS3;
+        loadPredictionModel();
         this.evaluator = new LoadingModelEvaluatorBuilder()
-                        .load(new FileInputStream(modelPath))
+                        .load(this.modelInputStream)
                         .build();
         this.evaluator.verify();
         this.sensorTypes = getSensorTypes();
-        this.inputFields = evaluator.getInputFields();
+        this.inputFields = this.evaluator.getInputFields();
+    }
 
+    private void loadPredictionModel() {
+        if (this.modelInputStream != null) {
+            return;
+        }
+        this.modelInputStream = modelBucketS3.getModelInputStream();
     }
 
     public Prediction execPrediction(Map<String, Object> measurements) {
@@ -195,5 +198,7 @@ public class PredictionService implements MeasurementObserver {
         predictions.sort(Comparator.comparing(Prediction::getRecordDate));
         return predictions;
     }
+
+    
 
 }

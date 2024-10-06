@@ -7,6 +7,7 @@ import com.spme.maintenance.application.service.MeasurementService;
 import com.spme.maintenance.application.service.PredictionService;
 import com.spme.maintenance.application.service.MeasurementObserver;
 
+
 @Configuration
 public class ApplicationConfig {
 
@@ -15,6 +16,7 @@ public class ApplicationConfig {
 
     @Autowired
     private PredictionService predictionService;
+
 
     @Bean
     public MeasurementObserver configureMeasurementObserver() {
