@@ -23,37 +23,6 @@ paths:
           description: Datos de medición inválidos.
         '500':
           description: Error interno del servidor.
-    get:
-      summary: Obtener datos de sensores
-      parameters:
-        - in: query
-          name: equipmentId
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: startDate
-          required: true
-          schema:
-            type: string
-            format: date-time
-        - in: query
-          name: endDate
-          required: true
-          schema:
-            type: string
-            format: date-time
-      responses:
-        '200':
-          description: Datos de sensores obtenidos exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Measurement'
-        '404':
-          description: No se encontraron mediciones para el equipo especificado.
   /measurements/graphics:
     get:
       summary: Obtener datos de sensores con predicciones
@@ -88,132 +57,6 @@ paths:
           description: No se encontraron mediciones para el equipo especificado.
         '500':
           description: Error interno del servidor.
-  /equipments:
-    post:
-      summary: Crear un nuevo equipo
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Equipment'
-      responses:
-        '201':
-          description: Equipo creado exitosamente
-          content:
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Datos de equipo inválidos.
-    get:
-      summary: Obtener todos los equipos
-      parameters:
-        - in: query
-          name: type
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: location
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lista de equipos obtenida exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  equipments:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Equipment'
-                  totalCount:
-                    type: integer
-                  filters:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      location:
-                        type: string
-  /equipments/batch:
-    post:
-      summary: Crear múltiples equipos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Equipment'
-      responses:
-        '201':
-          description: Equipos creados exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-        '400':
-          description: Datos de equipos inválidos.
-  /equipments/{id}:
-    get:
-      summary: Obtener un equipo por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Equipo obtenido exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Equipment'
-        '404':
-          description: Equipo no encontrado.
-    put:
-      summary: Actualizar un equipo
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Equipment'
-      responses:
-        '200':
-          description: Equipo actualizado exitosamente
-        '400':
-          description: Datos de equipo inválidos.
-        '404':
-          description: Equipo no encontrado.
-    delete:
-      summary: Eliminar un equipo
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Equipo eliminado exitosamente
-        '404':
-          description: Equipo no encontrado.
   /predictions:
     post:
       summary: Realizar una predicción para un equipo
@@ -222,72 +65,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PredictionRequest'
+              type: object
+              additionalProperties: true
       responses:
         '200':
           description: Predicción realizada exitosamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PredictionResponse'
+                $ref: '#/components/schemas/Prediction'
         '400':
           description: Datos de predicción inválidos
-        '404':
-          description: Equipo no encontrado
-  /predictions/{equipmentId}:
-    get:
-      summary: Obtener predicciones para un equipo específico
-      parameters:
-        - in: path
-          name: equipmentId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Predicciones obtenidas exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PredictionResponse'
-        '404':
-          description: Equipo no encontrado o sin predicciones
-  /predictions:
-    get:
-      summary: Obtener predicciones para un equipo en un rango de fechas
-      parameters:
-        - in: query
-          name: equipmentId
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: startDate
-          required: true
-          schema:
-            type: string
-            format: date-time
-        - in: query
-          name: endDate
-          required: true
-          schema:
-            type: string
-            format: date-time
-      responses:
-        '200':
-          description: Predicciones obtenidas exitosamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PredictionResponse'
-        '400':
-          description: Parámetros de consulta inválidos
-        '404':
-          description: No se encontraron predicciones para el equipo y rango de fechas especificados
+        '500':
+          description: Error interno del servidor
   /resources/save-screenshot:
     post:
       summary: Guardar una captura de pantalla
@@ -336,58 +126,38 @@ components:
           type: number
         vibrationX:
           type: number
-    Equipment:
-      type: object
-      properties:
-        id:
-          type: string
-        equipmentId:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-        location:
-          type: string
-        installationDate:
-          type: string
-          format: date
-        operatorEmails:
-          type: array
-          items:
-            type: string
-    PredictionRequest:
-      type: object
-      properties:
-        equipmentId:
-          type: string
-        measurementId:
-          type: string
-    PredictionResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        equipmentId:
-          type: string
-        measurementId:
-          type: string
-        predictionDate:
-          type: string
-          format: date-time
-        failureProbability:
-          type: number
-        estimatedTimeToFailure:
-          type: number
-        recommendedAction:
-          type: string
-    MeasurementWithPrediction:
+    MeasurementGraphicsDTO:
       type: object
       properties:
         measurement:
           $ref: '#/components/schemas/Measurement'
+        prediction:
+          $ref: '#/components/schemas/Prediction'
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: string
+        equipmentId:
+          type: string
+        recordDate:
+          type: string
+          format: date-time
         predictiveEventType:
           type: string
         probability:
           type: number
-          format: double
+        frequency:
+          type: number
+        current:
+          type: number
+        pressureIn:
+          type: number
+        pressureOut:
+          type: number
+        temperatureIn:
+          type: number
+        temperatureOut:
+          type: number
+        vibrationX:
+          type: number
