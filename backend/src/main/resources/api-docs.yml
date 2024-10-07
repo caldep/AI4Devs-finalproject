@@ -100,6 +100,109 @@ paths:
           description: Datos de captura de pantalla inválidos
         '500':
           description: Error interno del servidor al guardar la captura de pantalla
+  /equipments:
+    post:
+      summary: Crear un nuevo equipo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Equipment'
+      responses:
+        '201':
+          description: Equipo creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Datos de equipo inválidos
+        '500':
+          description: Error interno del servidor
+    get:
+      summary: Obtener todos los equipos
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          required: false
+          description: Tipo de equipo
+        - in: query
+          name: location
+          schema:
+            type: string
+          required: false
+          description: Ubicación del equipo
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Número de página
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Tamaño de página
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            default: name
+          required: false
+          description: Campo por el cual ordenar
+      responses:
+        '200':
+          description: Lista de equipos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  equipments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Equipment'
+                  currentPage:
+                    type: integer
+                  pageSize:
+                    type: integer
+                  filters:
+                    type: object
+                    additionalProperties:
+                      type: string
+        '500':
+          description: Error interno del servidor
+  /equipments/batch:
+    post:
+      summary: Crear múltiples equipos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Equipment'
+      responses:
+        '201':
+          description: Equipos creados exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Datos de equipos inválidos
+        '500':
+          description: Error interno del servidor
+
 components:
   schemas:
     Measurement:
@@ -161,3 +264,15 @@ components:
           type: number
         vibrationX:
           type: number
+    Equipment:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        location:
+          type: string
+        # Agrega aquí más propiedades según tu modelo de Equipment
