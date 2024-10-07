@@ -1,9 +1,9 @@
 amazon:
   dynamodb:
-    endpoint: https://30ec-2800-484-4482-5480-5274-b367-897e-12e3.ngrok-free.app
-    region: us-west-2
-    access-key: DUMMYIDEXAMPLE
-    secret-key: DUMMYEXAMPLEKEY
+    endpoint: ${AMAZON_DYNAMODB_ENDPOINT}
+    region: ${AMAZON_REGION}
+    access-key: ${AMAZON_ACCESS_KEY}
+    secret-key: ${AMAZON_SECRET_KEY}
 
 spring:
   data:
@@ -16,8 +16,13 @@ spring:
 
 prediction:
   model:
-    path: /home/clizcano/Documentos/GitHub/AI4Devs/AI4Devs-finalproject/backend/src/main/resources/models/predictor.pmml
+    bucket: predictor-model-bucket
+    key: models/predictor.pmml
 
 alert:
   screenshot:
-    path: ${user.dir}/resources/alerts/screenshots/
+    bucket: spme-screenshots-bucket
+
+logging:
+  level:
+    org.springframework: DEBUG
